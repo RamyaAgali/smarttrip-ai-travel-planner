@@ -1,111 +1,120 @@
-// // src/Dashboard.jsx
-// export default function Dashboard() {
-//   const token = localStorage.getItem("token");
-
-//   if (!token) {
-//     // If no token → redirect to login
-//     window.location.href = "/";
-//     return null;
-//   }
-
-//   return (
-//     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-//       <h1 className="text-4xl font-bold mb-4">Welcome to SmartTrip 🎉</h1>
-//       <p className="text-lg text-gray-700 mb-6">
-//         You are successfully logged in. Your token is stored in localStorage.
-//       </p>
-//       <button
-//         onClick={() => {
-//           localStorage.removeItem("token"); // Logout
-//           window.location.href = "/";
-//         }}
-//         className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition"
-//       >
-//         Logout
-//       </button>
-//     </div>
-//   );
-// }
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import AIAssistant from "./components/AIAssistant";
 
 // Simple JWT decoder
 function decodeToken(token) {
   try {
     const payload = token.split(".")[1];
     return JSON.parse(atob(payload));
-  } catch (e) {
+  } catch {
     return null;
   }
 }
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const [profile, setProfile] = useState(null);
-  const [serverMessage, setServerMessage] = useState("");
+  const [showAssistant, setShowAssistant] = useState(true); // ✅ Default true to auto-open AI
 
   if (!token) {
     window.location.href = "/";
     return null;
   }
 
-  useEffect(() => {
-    // Decode JWT (for quick display)
-    const decoded = decodeToken(token);
-    const emailFromJwt = decoded?.sub;
-
-    // Fetch profile from backend
-    fetch("http://localhost:8081/api/auth/profile", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+   useEffect(() => {
+  fetch("http://localhost:8081/api/auth/profile", {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("Unauthorized");
+      return res.json();
     })
-      .then((res) => {
-        if (!res.ok) throw new Error("Unauthorized");
-        return res.json();
-      })
-      .then((data) => setProfile(data))
-      .catch(() => {
-        localStorage.removeItem("token");
-        window.location.href = "/";
-      });
+    .then((data) => {
+      setProfile(data);
 
-    // Fetch secure test route
-    fetch("http://localhost:8081/api/test/secure", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      // 🧠 If payment was just completed, trigger AI greeting
+      if (localStorage.getItem("paymentSuccess") === "true") {
+        setTimeout(() => {
+          setShowAssistant(true);
+          localStorage.removeItem("paymentSuccess"); // clear flag
+        }, 1000);
+      }
     })
-      .then((res) => res.ok ? res.text() : "Unauthorized")
-      .then((msg) => setServerMessage(msg));
-  }, [token]);
+    .catch(() => {
+      localStorage.removeItem("token");
+      window.location.href = "/";
+    });
+}, [token]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100 text-center">
-      <h1 className="text-4xl font-bold mb-4">Welcome to SmartTrip 🎉</h1>
+    <div className="relative min-h-screen bg-gradient-to-br from-blue-100 to-blue-200 text-center flex flex-col items-center justify-center">
+      <h1 className="text-4xl font-bold mb-6 text-blue-800">
+        Welcome to SmartTrip 🌍
+      </h1>
 
       {profile ? (
-        <p className="text-lg text-gray-700">
-          Logged in as: <span className="font-semibold">{profile.name}</span> 
-          ({profile.email})
+        <p className="text-lg text-gray-800 mb-8">
+          Logged in as{" "}
+          <span className="font-semibold">{profile.name}</span> ({profile.email})
         </p>
       ) : (
-        <p className="text-gray-500">Loading profile...</p>
+        <p className="text-gray-600">Loading profile...</p>
       )}
 
-      {serverMessage && (
-        <p className="mt-4 text-green-600 font-medium">{serverMessage}</p>
-      )}
+      {/* Navigation Buttons */}
+      <div className="grid grid-cols-2 gap-6">
+        <button
+          onClick={() => navigate("/travel-assistant")}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl shadow-lg transition"
+        >
+          🧭 Trip Planner
+        </button>
 
-      <button
+        <button
+          onClick={() => navigate("/my-trips")}
+          className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl shadow-lg transition"
+        >
+          🌍 My Trips
+        </button>
+
+        <button
+          onClick={() => navigate("/profile")}
+          className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl shadow-lg transition"
+        >
+          👤 Profile
+        </button>
+
+        {/* <button
+          onClick={() => {
+            localStorage.removeItem("token");
+            navigate("/");
+          }}
+          className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl shadow-lg transition"
+        >
+          🔓 Logout
+        </button> */}
+        <button
         onClick={() => {
           localStorage.removeItem("token");
-          window.location.href = "/";
+          localStorage.removeItem("chatHistory");  // ⭐ clear chat
+          localStorage.removeItem("paymentSuccess"); // ⭐ clear payment flag
+          navigate("/");  // redirect to homepage/login
         }}
-        className="mt-6 bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition"
+        className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl shadow-lg transition"
       >
-        Logout
+        🔓 Logout
       </button>
+      </div>
+
+      {/* ✅ Auto-popup AI Assistant */}
+      {showAssistant && (
+        <AIAssistant
+          userName={profile?.name || "Traveler"}
+          onClose={() => setShowAssistant(false)}
+        />
+      )}
     </div>
   );
 }
-

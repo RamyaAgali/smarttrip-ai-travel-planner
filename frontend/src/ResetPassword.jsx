@@ -7,6 +7,10 @@ export default function ResetPassword() {
     confirmPassword: "",
   });
   const [strength, setStrength] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  // ✅ Extract token from URL (important)
+  const token = new URLSearchParams(window.location.search).get("token");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,30 +24,40 @@ export default function ResetPassword() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!token) {
+      alert("Invalid or missing reset token. Please check your email link again.");
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
 
-    // 👉 Here call your backend API to update password
+    setLoading(true);
+
     try {
       const response = await fetch("http://localhost:8081/api/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          password: formData.password,
+          token: token, // ✅ Send the token along with password
+          newPassword: formData.password,
         }),
       });
 
       if (response.ok) {
-        alert("Password updated successfully!");
+        alert("✅ Password updated successfully!");
         window.location.href = "/"; // back to login
       } else {
-        alert("Failed to reset password");
+        const err = await response.json();
+        alert(`❌ Failed to reset password: ${err.error || "Unknown error"}`);
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Server error, please try again");
+      alert("⚠️ Server error, please try again");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -84,9 +98,14 @@ export default function ResetPassword() {
 
           <button
             type="submit"
-            className="mt-4 w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition"
+            disabled={loading}
+            className={`mt-4 w-full p-3 rounded-lg transition ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-600 text-white hover:bg-blue-700"
+            }`}
           >
-            Update Password
+            {loading ? "Updating..." : "Update Password"}
           </button>
         </form>
       </div>

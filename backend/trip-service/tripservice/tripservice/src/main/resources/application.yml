@@ -1,0 +1,73 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: tripservice
+
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        format_sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${SMTP_USERNAME}
+    password: ${SMTP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+geoapify:
+  key: ${GEOAPIFY_KEY}
+
+openrouteservice:
+  key: ${ORS_KEY}
+
+exchange:
+  url: ${EXCHANGE_URL}
+
+weather:
+  url: ${WEATHER_URL}
+
+openrouter:
+  key: ${OPENROUTER_KEY}
+
+cashfree:
+  app:
+    id: ${CASHFREE_APP_ID}
+  secret:
+    key: ${CASHFREE_SECRET_KEY}
+  base:
+    url: ${CASHFREE_BASE_URL}
+
+auth:
+  service:
+    url: ${AUTH_SERVICE_URL}
+
+internal:
+  auth:
+    token: ${INTERNAL_SECRET}
+  base-url: ${AUTH_SERVICE_URL}
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 86400000
+
+logging:
+  level:
+    root: INFO
