@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        maven "Maven-Local"
+        maven "Maven-Internal"
         jdk "JDK17"
     }
 
