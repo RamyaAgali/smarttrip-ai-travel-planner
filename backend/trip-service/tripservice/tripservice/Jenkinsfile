@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
+        SONAR_AUTH_TOKEN = credentials('sonar-token')
     }
 
     stages {
@@ -19,6 +20,23 @@ pipeline {
                 script {
                     dir('backend/trip-service/tripservice/tripservice') {
                         bat 'mvn clean test'
+                    }
+                }
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('local-sonar') {
+                    script {
+                        dir('backend/trip-service/tripservice/tripservice') {
+                            bat """
+                            mvn sonar:sonar ^
+                                -Dsonar.projectKey=trip-service ^
+                                -Dsonar.host.url=http://localhost:9000 ^
+                                -Dsonar.token=%SONAR_AUTH_TOKEN%
+                            """
+                        }
                     }
                 }
             }
