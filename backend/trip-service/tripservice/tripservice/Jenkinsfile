@@ -1,12 +1,16 @@
+properties([
+    parameters([
+        string(
+            name: 'USER_EMAIL',
+            defaultValue: 'user@gmail.com',
+            description: 'Enter email address to receive pipeline notifications'
+        )
+    ])
+])
+
 pipeline {
     agent any
 
-    options([
-        parameters([
-        string(name: 'USER_EMAIL', defaultValue: 'user@gmail.com', description: 'Enter email address to receive pipeline notifications')
-        ])
-    ])
-    
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
         SONAR_AUTH_TOKEN = credentials('sonar-token')
@@ -16,7 +20,7 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git branch: 'main',
+                git branch: 'ci-clean',
                     url: 'https://github.com/RamyaAgali/smarttrip-ai-travel-planner'
             }
         }
@@ -96,20 +100,21 @@ pipeline {
     }
 
     post {
-    success {
-        emailext(
-            to: "${params.USER_EMAIL}",
-            subject: "SUCCESS: ${env.JOB_NAME}",
-            body: "Pipeline succeeded.\nCheck deployment status.\n\nBuild URL: ${env.BUILD_URL}"
-        )
-    }
 
-    failure {
-        emailext(
-            to: "${params.USER_EMAIL}",
-            subject: "FAILED: ${env.JOB_NAME}",
-            body: "Pipeline failed.\nPlease check Jenkins console logs.\n\nBuild URL: ${env.BUILD_URL}"
-        )
+        success {
+            emailext(
+                to: "${params.USER_EMAIL}",
+                subject: "SUCCESS: ${env.JOB_NAME}",
+                body: "Trip Service Pipeline succeeded!\n\nBuild URL: ${env.BUILD_URL}"
+            )
+        }
+
+        failure {
+            emailext(
+                to: "${params.USER_EMAIL}",
+                subject: "FAILED: ${env.JOB_NAME}",
+                body: "Trip Service Pipeline failed.\nPlease check logs.\n\nBuild URL: ${env.BUILD_URL}"
+            )
+        }
     }
-}
 }
