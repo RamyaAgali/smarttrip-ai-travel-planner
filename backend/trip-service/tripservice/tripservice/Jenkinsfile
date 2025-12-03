@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
+    }
+
     stages {
 
         stage('Checkout Code') {
@@ -10,13 +14,33 @@ pipeline {
             }
         }
 
+        stage('Run Tests') {
+            steps {
+                script {
+                    dir('backend/trip-service/tripservice/tripservice') {
+                        bat 'mvn clean test'
+                    }
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {
                     dir('backend/trip-service/tripservice/tripservice') {
                         bat 'docker build -t trip-service-image:latest .'
+                        bat "docker tag trip-service-image:latest ramya6367/trip-service:latest"
                     }
                 }
+            }
+        }
+
+        stage('Push to DockerHub') {
+            steps {
+                bat """
+                echo %DOCKERHUB_CREDENTIALS_PSW% | docker login -u %DOCKERHUB_CREDENTIALS_USR% --password-stdin
+                docker push ramya6367/trip-service:latest
+                """
             }
         }
 
@@ -40,7 +64,7 @@ pipeline {
                     docker run -d ^
                         --name trip-service ^
                         -p 8084:8084 ^
-                        trip-service-image:latest
+                        ramya6367/trip-service:latest
                     '''
                 }
             }
@@ -49,10 +73,10 @@ pipeline {
 
     post {
         success {
-            echo 'Trip Service Deployed Successfully'
+            echo 'Trip Service CI/CD Successful'
         }
         failure {
-            echo 'Trip Service Deployment Failed'
+            echo 'Trip Service CI/CD Failed'
         }
     }
 }
