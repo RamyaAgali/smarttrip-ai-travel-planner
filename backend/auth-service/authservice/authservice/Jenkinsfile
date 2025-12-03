@@ -27,6 +27,12 @@ pipeline {
             }
         }
 
+        stage('Publish Coverage') {
+            steps {
+                jacoco(execPattern: '/jacoco.exec', classPattern: '/classes', sourcePattern: '/src/main/java')
+            }
+        }
+
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('local-sonar') {
