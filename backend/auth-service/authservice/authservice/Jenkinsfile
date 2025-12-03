@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
+    }
+
     stages {
 
         stage('Checkout Code') {
@@ -10,13 +14,33 @@ pipeline {
             }
         }
 
+        stage('Run Tests') {
+            steps {
+                script {
+                    dir('backend/auth-service/authservice/authservice') {
+                        bat 'mvn clean test'
+                    }
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {
                     dir('backend/auth-service/authservice/authservice') {
                         bat 'docker build -t auth-service-image:latest .'
+                        bat "docker tag auth-service-image:latest ramya6367/auth-service:latest"
                     }
                 }
+            }
+        }
+
+        stage('Push to DockerHub') {
+            steps {
+                bat """
+                echo %DOCKERHUB_CREDENTIALS_PSW% | docker login -u %DOCKERHUB_CREDENTIALS_USR% --password-stdin
+                docker push ramya6367/auth-service:latest
+                """
             }
         }
 
@@ -40,7 +64,7 @@ pipeline {
                     docker run -d ^
                         --name auth-service ^
                         -p 8081:8081 ^
-                        auth-service-image:latest
+                        ramya6367/auth-service:latest
                     '''
                 }
             }
@@ -49,10 +73,10 @@ pipeline {
 
     post {
         success {
-            echo 'Auth Service Deployed Successfully'
+            echo 'Auth Service CI/CD Successful'
         }
         failure {
-            echo 'Auth Service Deployment Failed'
+            echo 'Auth Service CI/CD Failed'
         }
     }
 }
