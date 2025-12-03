@@ -1,15 +1,9 @@
-properties([
-    parameters([
-        string(
-            name: 'USER_EMAIL',
-            defaultValue: 'user@gmail.com',
-            description: 'Enter email address to receive pipeline notifications'
-        )
-    ])
-])
-
 pipeline {
     agent any
+
+    parameters {
+        string(name: 'USER_EMAIL', defaultValue: 'user@gmail.com', description: 'Enter email for pipeline alerts')
+    }
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
@@ -20,7 +14,7 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git branch: 'ci-clean',
+                git branch: 'main',
                     url: 'https://github.com/RamyaAgali/smarttrip-ai-travel-planner'
             }
         }
@@ -100,12 +94,11 @@ pipeline {
     }
 
     post {
-
         success {
             emailext(
                 to: "${params.USER_EMAIL}",
                 subject: "SUCCESS: ${env.JOB_NAME}",
-                body: "Trip Service Pipeline succeeded!\n\nBuild URL: ${env.BUILD_URL}"
+                body: "Pipeline succeeded.\n\nBuild URL: ${env.BUILD_URL}"
             )
         }
 
@@ -113,7 +106,7 @@ pipeline {
             emailext(
                 to: "${params.USER_EMAIL}",
                 subject: "FAILED: ${env.JOB_NAME}",
-                body: "Trip Service Pipeline failed.\nPlease check logs.\n\nBuild URL: ${env.BUILD_URL}"
+                body: "Pipeline failed.\n\nCheck logs: ${env.BUILD_URL}"
             )
         }
     }
