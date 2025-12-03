@@ -1,5 +1,6 @@
 pipeline {
     agent any
+
     stages {
 
         stage('Checkout Code') {
@@ -48,10 +49,10 @@ pipeline {
 
     post {
         success {
-            echo 'Auth Service Deployed Successfully 🎉'
+            echo 'Auth Service Deployed Successfully'
         }
         failure {
-            echo 'Auth Service Deployment Failed ❌'
+            echo 'Auth Service Deployment Failed'
         }
     }
 }
