@@ -1,6 +1,12 @@
 pipeline {
     agent any
 
+    properties([
+        parameters([
+        string(name: 'USER_EMAIL', defaultValue: 'user@gmail.com', description: 'Enter email address to receive pipeline notifications')
+        ])
+    ])
+    
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
         SONAR_AUTH_TOKEN = credentials('sonar-token')
@@ -90,11 +96,20 @@ pipeline {
     }
 
     post {
-        success {
-            echo 'Trip Service CI/CD Successful'
-        }
-        failure {
-            echo 'Trip Service CI/CD Failed'
-        }
+    success {
+        emailext(
+            to: "${params.USER_EMAIL}",
+            subject: "SUCCESS: ${env.JOB_NAME}",
+            body: "Pipeline succeeded.\nCheck deployment status.\n\nBuild URL: ${env.BUILD_URL}"
+        )
     }
+
+    failure {
+        emailext(
+            to: "${params.USER_EMAIL}",
+            subject: "FAILED: ${env.JOB_NAME}",
+            body: "Pipeline failed.\nPlease check Jenkins console logs.\n\nBuild URL: ${env.BUILD_URL}"
+        )
+    }
+}
 }
