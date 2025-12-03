@@ -16,43 +16,43 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                bat 'mvn test'
+                dir('backend/auth-service/authservice/authservice') {
+                    bat 'mvn test'
+                }
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('local-sonar') {
-                    bat """
-                        mvn sonar:sonar ^
-                        -Dsonar.projectKey=auth-service ^
-                        -Dsonar.host.url=http://localhost:9000 ^
-                        -Dsonar.login=%SONAR_AUTH_TOKEN%
-                    """
+                    dir('backend/auth-service/authservice/authservice') {
+                        bat """
+                            mvn sonar:sonar ^
+                            -Dsonar.projectKey=auth-service ^
+                            -Dsonar.host.url=http://localhost:9000 ^
+                            -Dsonar.login=%SONAR_AUTH_TOKEN%
+                        """
+                    }
                 }
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    dir('backend/auth-service/authservice/authservice') {
-                        bat 'docker build -t auth-service-image:latest .'
-                    }
+                dir('backend/auth-service/authservice/authservice') {
+                    bat 'docker build -t auth-service-image:latest .'
                 }
             }
         }
 
         stage('Stop Old Container') {
             steps {
-                script {
-                    bat """
-                        docker ps -a -q -f name=auth-service > cid.txt
-                        set CID=
-                        for /f "tokens=*" %%i in (cid.txt) do set CID=%%i
-                        if NOT "%CID%"=="" docker rm -f %CID%
-                    """
-                }
+                bat """
+                    docker ps -a -q -f name=auth-service > cid.txt
+                    set CID=
+                    for /f "tokens=*" %%i in (cid.txt) do set CID=%%i
+                    if NOT "%CID%"=="" docker rm -f %CID%
+                """
             }
         }
 
@@ -69,11 +69,7 @@ pipeline {
     }
 
     post {
-        success {
-            echo 'Auth Service Pipeline Success'
-        }
-        failure {
-            echo 'Auth Service Pipeline Failed'
-        }
+        success { echo 'Auth Service Pipeline Success' }
+        failure { echo 'Auth Service Pipeline Failed' }
     }
 }
