@@ -1,7 +1,7 @@
 pipeline {
     agent any
 
-    properties([
+    options([
         parameters([
         string(name: 'USER_EMAIL', defaultValue: 'user@gmail.com', description: 'Enter email address to receive pipeline notifications')
         ])
