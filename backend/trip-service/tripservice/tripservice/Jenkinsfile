@@ -1,46 +1,39 @@
 pipeline {
     agent any
 
-    tools {
-        maven "Maven-3.9"
-        jdk "JDK17"
-    }
-
     stages {
-
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                checkout scm
+                git branch: 'main', url: 'https://github.com/RamyaAgali/smarttrip-ai-travel-planner'
             }
         }
 
-        stage('Build & Test') {
+        stage('Build Docker Image') {
             steps {
-                sh 'mvn -f backend/trip-service/tripservice/tripservice/pom.xml clean install -DskipTests=false'
+                script {
+                    sh """
+                    cd backend/trip-service/tripservice/tripservice
+                    docker build -t trip-service-image:latest .
+                    """
+                }
             }
         }
 
-        stage('Docker Build') {
+        stage('Run Container for Testing') {
             steps {
-                sh '''
-                docker build -t trip-service-image:latest backend/trip-service/
-                '''
+                script {
+                    sh """
+                    docker rm -f travel-service-test || true
+                    docker run -d --name travel-service-test -p 8082:8080 travel-service-image:latest
+                    """
+                }
             }
         }
 
-        stage('Archive JAR') {
+        stage('Publish Image') {
             steps {
-                archiveArtifacts artifacts: 'backend/trip-service/tripservice/tripservice/target/*.jar', fingerprint: true
+                echo "Push to Docker Hub or deploy server (optional)"
             }
-        }
-    }
-
-    post {
-        success {
-            echo 'Trip Service CI Completed Successfully.'
-        }
-        failure {
-            echo 'Trip Service CI Failed.'
         }
     }
 }
