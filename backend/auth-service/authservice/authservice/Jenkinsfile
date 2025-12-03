@@ -13,8 +13,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    dir('backend/auth-service/authservice/authservice') {
-                        sh 'docker build -t auth-service-image:latest .'
+                    dir("backend/auth-service/authservice/authservice") {
+                        bat 'docker build -t auth-service-image:latest .'
                     }
                 }
             }
@@ -23,10 +23,9 @@ pipeline {
         stage('Stop Old Container') {
             steps {
                 script {
-                    sh '''
-                    if [ $(docker ps -aq -f name=auth-service) ]; then
-                        docker rm -f auth-service || true
-                    fi
+                    bat '''
+                    docker ps -a -q -f name=auth-service > tmp.txt
+                    for /f %%i in (tmp.txt) do docker rm -f %%i
                     '''
                 }
             }
@@ -35,11 +34,8 @@ pipeline {
         stage('Run New Container') {
             steps {
                 script {
-                    sh '''
-                    docker run -d \
-                        --name auth-service \
-                        -p 8081:8081 \
-                        auth-service-image:latest
+                    bat '''
+                    docker run -d --name auth-service -p 8081:8081 auth-service-image:latest
                     '''
                 }
             }
@@ -48,10 +44,10 @@ pipeline {
 
     post {
         success {
-            echo 'Auth Service Deployed Successfully 🎉'
+            echo 'Auth Service Deployed Successfully'
         }
         failure {
-            echo 'Auth Service Deployment Failed ❌'
+            echo 'Auth Service Deployment Failed'
         }
     }
 }
