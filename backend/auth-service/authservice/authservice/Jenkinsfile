@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
+        SONAR_AUTH_TOKEN = credentials('sonar-token')
     }
 
     stages {
@@ -16,10 +16,19 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                script {
-                    dir('backend/auth-service/authservice/authservice') {
-                        bat 'mvn clean test'
-                    }
+                bat 'mvn test'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('local-sonar') {
+                    bat """
+                        mvn sonar:sonar ^
+                        -Dsonar.projectKey=auth-service ^
+                        -Dsonar.host.url=http://localhost:9000 ^
+                        -Dsonar.login=%SONAR_AUTH_TOKEN%
+                    """
                 }
             }
         }
@@ -29,54 +38,42 @@ pipeline {
                 script {
                     dir('backend/auth-service/authservice/authservice') {
                         bat 'docker build -t auth-service-image:latest .'
-                        bat "docker tag auth-service-image:latest ramya6367/auth-service:latest"
                     }
                 }
-            }
-        }
-
-        stage('Push to DockerHub') {
-            steps {
-                bat """
-                echo %DOCKERHUB_CREDENTIALS_PSW% | docker login -u %DOCKERHUB_CREDENTIALS_USR% --password-stdin
-                docker push ramya6367/auth-service:latest
-                """
             }
         }
 
         stage('Stop Old Container') {
             steps {
                 script {
-                    bat '''
-                    docker ps -a -q -f name=auth-service > cid.txt
-                    set CID=
-                    for /f "tokens=*" %%i in (cid.txt) do set CID=%%i
-                    if NOT "%CID%"=="" docker rm -f %CID%
-                    '''
+                    bat """
+                        docker ps -a -q -f name=auth-service > cid.txt
+                        set CID=
+                        for /f "tokens=*" %%i in (cid.txt) do set CID=%%i
+                        if NOT "%CID%"=="" docker rm -f %CID%
+                    """
                 }
             }
         }
 
         stage('Run New Container') {
             steps {
-                script {
-                    bat '''
+                bat """
                     docker run -d ^
                         --name auth-service ^
                         -p 8081:8081 ^
-                        ramya6367/auth-service:latest
-                    '''
-                }
+                        auth-service-image:latest
+                """
             }
         }
     }
 
     post {
         success {
-            echo 'Auth Service CI/CD Successful'
+            echo 'Auth Service Pipeline Success'
         }
         failure {
-            echo 'Auth Service CI/CD Failed'
+            echo 'Auth Service Pipeline Failed'
         }
     }
 }
