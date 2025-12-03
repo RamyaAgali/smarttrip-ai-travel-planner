@@ -20,12 +20,13 @@ pipeline {
             }
         }
 
-        stage('Stop Old Container') {
-            steps {
-                script {
-                    bat '''
+       stage('Stop Old Container') {
+           steps {
+               script {
+                   bat '''
                     docker ps -a -q -f name=auth-service > tmp.txt
-                    for /f %%i in (tmp.txt) do docker rm -f %%i
+                    set /p CID=<tmp.txt
+                    if not "%CID%"=="" docker rm -f %CID%
                     '''
                 }
             }
