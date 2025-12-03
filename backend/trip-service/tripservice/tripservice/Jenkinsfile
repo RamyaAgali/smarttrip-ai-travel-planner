@@ -2,38 +2,57 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
+
+        stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/RamyaAgali/smarttrip-ai-travel-planner'
+                git branch: 'main',
+                    url: 'https://github.com/RamyaAgali/smarttrip-ai-travel-planner'
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh """
-                    cd backend/trip-service/tripservice/tripservice
-                    docker build -t trip-service-image:latest .
-                    """
+                    dir('backend/trip-service/tripservice/tripservice') {
+                        bat 'docker build -t trip-service-image:latest .'
+                    }
                 }
             }
         }
 
-        stage('Run Container for Testing') {
+        stage('Stop Old Container') {
             steps {
                 script {
-                    sh """
-                    docker rm -f travel-service-test || true
-                    docker run -d --name travel-service-test -p 8082:8080 travel-service-image:latest
-                    """
+                    bat '''
+                    docker ps -a -q -f name=trip-service > cid.txt
+                    set CID=
+                    for /f "tokens=*" %%i in (cid.txt) do set CID=%%i
+                    if NOT "%CID%"=="" docker rm -f %CID%
+                    '''
                 }
             }
         }
 
-        stage('Publish Image') {
+        stage('Run New Container') {
             steps {
-                echo "Push to Docker Hub or deploy server (optional)"
+                script {
+                    bat '''
+                    docker run -d ^
+                        --name trip-service ^
+                        -p 8084:8084 ^
+                        trip-service-image:latest
+                    '''
+                }
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Trip Service Deployed Successfully'
+        }
+        failure {
+            echo 'Trip Service Deployment Failed'
         }
     }
 }
