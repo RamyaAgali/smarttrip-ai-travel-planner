@@ -4,8 +4,9 @@ pipeline {
     parameters {
         string(name: 'USER_EMAIL', defaultValue: 'user@gmail.com', description: 'Enter email for pipeline alerts')
     }
-    
+
     environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
         SONAR_AUTH_TOKEN = credentials('sonar-token')
     }
 
@@ -72,8 +73,21 @@ pipeline {
         }
     }
 
-    post {
-        success { echo 'Auth Service Pipeline Success' }
-        failure { echo 'Auth Service Pipeline Failed' }
+     post {
+        success {
+            emailext(
+                to: "${params.USER_EMAIL}",
+                subject: "SUCCESS: ${env.JOB_NAME}",
+                body: "Pipeline succeeded.\n\nBuild URL: ${env.BUILD_URL}"
+            )
+        }
+
+        failure {
+            emailext(
+                to: "${params.USER_EMAIL}",
+                subject: "FAILED: ${env.JOB_NAME}",
+                body: "Pipeline failed.\n\nCheck logs: ${env.BUILD_URL}"
+            )
+        }
     }
 }
