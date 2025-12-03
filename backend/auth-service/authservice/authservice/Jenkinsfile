@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        SONAR_AUTH_TOKEN = credentials('sonar-token')  // your token ID in Jenkins
+        SONAR_AUTH_TOKEN = credentials('sonar-token')
     }
 
     stages {
@@ -46,34 +46,34 @@ pipeline {
         stage('Stop Old Container') {
             steps {
                 script {
-                    bat '''
+                    bat """
                         docker ps -a -q -f name=auth-service > cid.txt
                         set CID=
                         for /f "tokens=*" %%i in (cid.txt) do set CID=%%i
                         if NOT "%CID%"=="" docker rm -f %CID%
-                    '''
+                    """
                 }
             }
         }
 
         stage('Run New Container') {
             steps {
-                bat '''
+                bat """
                     docker run -d ^
                         --name auth-service ^
                         -p 8081:8081 ^
                         auth-service-image:latest
-                '''
+                """
             }
         }
     }
 
     post {
         success {
-            echo 'Auth Service Pipeline Success 🎉'
+            echo 'Auth Service Pipeline Success'
         }
         failure {
-            echo 'Auth Service Pipeline Failed ❌'
+            echo 'Auth Service Pipeline Failed'
         }
     }
 }
