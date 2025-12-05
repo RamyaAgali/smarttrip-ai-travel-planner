@@ -28,11 +28,8 @@ spring:
     username: ${SMTP_USERNAME}
     password: ${SMTP_PASSWORD}
     properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
 
 geoapify:
   key: ${GEOAPIFY_KEY}
