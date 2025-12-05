@@ -52,52 +52,52 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    dir('backend/trip-service/tripservice/tripservice') {
-                        bat 'docker build -t trip-service-image:latest .'
-                        bat "docker tag trip-service-image:latest ramya6367/trip-service:latest"
-                    }
-                }
-            }
-        }
+    //     stage('Build Docker Image') {
+    //         steps {
+    //             script {
+    //                 dir('backend/trip-service/tripservice/tripservice') {
+    //                     bat 'docker build -t trip-service-image:latest .'
+    //                     bat "docker tag trip-service-image:latest ramya6367/trip-service:latest"
+    //                 }
+    //             }
+    //         }
+    //     }
 
-        stage('Push to DockerHub') {
-            steps {
-                bat """
-                echo %DOCKERHUB_CREDENTIALS_PSW% | docker login -u %DOCKERHUB_CREDENTIALS_USR% --password-stdin
-                docker push ramya6367/trip-service:latest
-                """
-            }
-        }
+    //     stage('Push to DockerHub') {
+    //         steps {
+    //             bat """
+    //             echo %DOCKERHUB_CREDENTIALS_PSW% | docker login -u %DOCKERHUB_CREDENTIALS_USR% --password-stdin
+    //             docker push ramya6367/trip-service:latest
+    //             """
+    //         }
+    //     }
 
-        stage('Stop Old Container') {
-            steps {
-                script {
-                    bat '''
-                    docker ps -a -q -f name=trip-service > cid.txt
-                    set CID=
-                    for /f "tokens=*" %%i in (cid.txt) do set CID=%%i
-                    if NOT "%CID%"=="" docker rm -f %CID%
-                    '''
-                }
-            }
-        }
+    //     stage('Stop Old Container') {
+    //         steps {
+    //             script {
+    //                 bat '''
+    //                 docker ps -a -q -f name=trip-service > cid.txt
+    //                 set CID=
+    //                 for /f "tokens=*" %%i in (cid.txt) do set CID=%%i
+    //                 if NOT "%CID%"=="" docker rm -f %CID%
+    //                 '''
+    //             }
+    //         }
+    //     }
 
-        stage('Run New Container') {
-            steps {
-                script {
-                    bat '''
-                    docker run -d ^
-                        --name trip-service ^
-                        -p 8084:8084 ^
-                        ramya6367/trip-service:latest
-                    '''
-                }
-            }
-        }
-    }
+    //     stage('Run New Container') {
+    //         steps {
+    //             script {
+    //                 bat '''
+    //                 docker run -d ^
+    //                     --name trip-service ^
+    //                     -p 8084:8084 ^
+    //                     ramya6367/trip-service:latest
+    //                 '''
+    //             }
+    //         }
+    //     }
+    // }
 
     post {
         success {

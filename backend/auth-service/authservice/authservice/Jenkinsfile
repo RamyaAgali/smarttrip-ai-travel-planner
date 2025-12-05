@@ -48,36 +48,36 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
-            steps {
-                dir('backend/auth-service/authservice/authservice') {
-                    bat 'docker build -t auth-service-image:latest .'
-                }
-            }
-        }
+    //     stage('Build Docker Image') {
+    //         steps {
+    //             dir('backend/auth-service/authservice/authservice') {
+    //                 bat 'docker build -t auth-service-image:latest .'
+    //             }
+    //         }
+    //     }
 
-        stage('Stop Old Container') {
-            steps {
-                bat """
-                    docker ps -a -q -f name=auth-service > cid.txt
-                    set CID=
-                    for /f "tokens=*" %%i in (cid.txt) do set CID=%%i
-                    if NOT "%CID%"=="" docker rm -f %CID%
-                """
-            }
-        }
+    //     stage('Stop Old Container') {
+    //         steps {
+    //             bat """
+    //                 docker ps -a -q -f name=auth-service > cid.txt
+    //                 set CID=
+    //                 for /f "tokens=*" %%i in (cid.txt) do set CID=%%i
+    //                 if NOT "%CID%"=="" docker rm -f %CID%
+    //             """
+    //         }
+    //     }
 
-        stage('Run New Container') {
-            steps {
-                bat """
-                    docker run -d ^
-                        --name auth-service ^
-                        -p 8081:8081 ^
-                        auth-service-image:latest
-                """
-            }
-        }
-    }
+    //     stage('Run New Container') {
+    //         steps {
+    //             bat """
+    //                 docker run -d ^
+    //                     --name auth-service ^
+    //                     -p 8081:8081 ^
+    //                     auth-service-image:latest
+    //             """
+    //         }
+    //     }
+    // }
 
      post {
         success {
