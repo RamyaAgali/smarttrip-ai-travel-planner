@@ -21,6 +21,7 @@ public class SecurityConfig {
         http.csrf().disable()
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()   // ✅ allow signup & login
+                .requestMatchers("/actuator/**").permitAll()
                 .anyRequest().authenticated()                  // everything else needs JWT
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
