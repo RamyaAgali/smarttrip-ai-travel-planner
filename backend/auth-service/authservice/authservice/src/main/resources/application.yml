@@ -22,8 +22,8 @@ spring:
   application:
    name: authservice
   mail:
-    host: ${SPRING_MAIL_HOST}
-    port: ${SPRING_MAIL_PORT}
+    host: smtp.gmail.com
+    port: 587
     username: ${SMTP_USERNAME}
     password: ${SMTP_PASSWORD}
     properties:
