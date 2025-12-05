@@ -19,7 +19,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
+        default_schema: trip_schema
+    
   mail:
     host: smtp.gmail.com
     port: 587
