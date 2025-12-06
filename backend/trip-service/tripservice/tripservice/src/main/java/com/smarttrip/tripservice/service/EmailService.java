@@ -13,11 +13,16 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import com.smarttrip.tripservice.commom.SendGridClient;
+
 @Service
 public class EmailService {
 
     @Autowired
     private JavaMailSender mailSender;
+    
+    @Autowired
+    private SendGridClient sendGridClient;
 
     // ✅ Common method for successful payment
     public void sendPaymentConfirmation(
@@ -83,7 +88,9 @@ public class EmailService {
               InputStreamSource attachment = new InputStreamResource(new ByteArrayInputStream(pdfBytes));
               helper.addAttachment("SmartTrip-Invoice.pdf", new ByteArrayDataSource(pdfBytes, "application/pdf"));
           }
-            mailSender.send(message);
+//            mailSender.send(message);
+          	String subject = "SmartTrip ✈ Payment Successful – Your Trip to " + destination;
+          	sendGridClient.sendEmail(email, subject,htmlContent);
             System.out.println("✅ Payment confirmation email sent to " + email);
 
         } catch (MessagingException e) {
@@ -136,7 +143,9 @@ public class EmailService {
                 """.formatted(destination, destination, currency,amount, reason);
 
             helper.setText(htmlContent, true);
-            mailSender.send(message);
+//            mailSender.send(message);
+            String subject = "SmartTrip ⚠ Payment Failed – Trip to " + destination;
+            sendGridClient.sendEmail(email, subject, htmlContent);
             
             System.out.println("⚠ Payment failure email sent to " + email);
 
@@ -153,7 +162,7 @@ public class EmailService {
             helper.setTo(email);
             helper.setSubject("SmartTrip 💸 Refund Initiated – " + destination);
 
-            String html = """
+            String htmlContent = """
                 <div style="font-family: Arial, sans-serif; background:#f0fdf4; padding:20px;">
                   <div style="max-width:600px; margin:auto; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.08)">
                     <div style="background:#16a34a; color:white; padding:15px; text-align:center;">
@@ -175,8 +184,10 @@ public class EmailService {
                 </div>
             """.formatted(destination, orderId, currency, amount);
 
-            helper.setText(html, true);
-            mailSender.send(msg);
+            helper.setText(htmlContent, true);
+//            mailSender.send(msg);
+            String subject = "SmartTrip 💸 Refund Initiated – " + destination;
+            sendGridClient.sendEmail(email, subject, htmlContent);
             System.out.println("✅ Refund initiated email sent to " + email);
         } catch (Exception e) {
             System.err.println("⚠ Failed to send refund email: " + e.getMessage());
@@ -191,7 +202,7 @@ public class EmailService {
             helper.setTo(email);
             helper.setSubject("SmartTrip ❌ Trip Cancelled – " + destination);
 
-            String html = """
+            String htmlContent = """
                 <div style="font-family: Arial, sans-serif; background:#fff7ed; padding:20px;">
                   <div style="max-width:600px; margin:auto; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.08)">
                     <div style="background:#f97316; color:white; padding:15px; text-align:center;">
@@ -213,8 +224,10 @@ public class EmailService {
                 </div>
             """.formatted(destination, startDate, endDate);
 
-            helper.setText(html, true);
-            mailSender.send(msg);
+            helper.setText(htmlContent, true);
+//            mailSender.send(msg);
+            String subject = "SmartTrip ❌ Trip Cancelled – " + destination;
+            sendGridClient.sendEmail(email, subject, htmlContent);
             System.out.println("📨 Cancellation email sent to " + email);
         } catch (Exception e) {
             System.err.println("⚠ Failed to send trip cancellation email: " + e.getMessage());
@@ -229,7 +242,7 @@ public class EmailService {
             helper.setTo(email);
             helper.setSubject("SmartTrip 🔁 Trip Rebooked – " + destination);
 
-            String html = """
+            String htmlContent = """
                 <div style="font-family: Arial, sans-serif; background:#ecfdf5; padding:20px;">
                   <div style="max-width:600px; margin:auto; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.08)">
                     <div style="background:#059669; color:white; padding:15px; text-align:center;">
@@ -256,8 +269,10 @@ public class EmailService {
                 </div>
             """.formatted(destination, startDate, endDate);
 
-            helper.setText(html, true);
-            mailSender.send(msg);
+            helper.setText(htmlContent, true);
+//            mailSender.send(msg);
+            String subject = "SmartTrip 🔁 Trip Rebooked – " + destination;
+            sendGridClient.sendEmail(email, subject, htmlContent);
             System.out.println("✅ Rebook confirmation email sent to " + email);
         } catch (Exception e) {
             System.err.println("⚠ Failed to send rebook email: " + e.getMessage());
@@ -272,7 +287,7 @@ public class EmailService {
             helper.setTo(email);
             helper.setSubject("SmartTrip 🧳 Trip Booked – Complete Payment to Confirm " + destination);
 
-            String html = """
+            String htmlContent = """
                 <div style="font-family: Arial, sans-serif; background:#eef2ff; padding:20px;">
                   <div style="max-width:600px; margin:auto; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.08)">
                     <div style="background:#4f46e5; color:white; padding:15px; text-align:center;">
@@ -303,8 +318,10 @@ public class EmailService {
                 </div>
             """.formatted(destination, destination, startDate, endDate, currency, amount);
 
-            helper.setText(html, true);
-            mailSender.send(msg);
+            helper.setText(htmlContent, true);
+//            mailSender.send(msg);
+            String subject = "SmartTrip 🧳 Trip Booked – Complete Payment to Confirm " + destination;
+            sendGridClient.sendEmail(email, subject, htmlContent);
             System.out.println("📨 Trip booked (pending payment) email sent to " + email);
         } catch (Exception e) {
             System.err.println("⚠ Failed to send booked pending payment email: " + e.getMessage());
