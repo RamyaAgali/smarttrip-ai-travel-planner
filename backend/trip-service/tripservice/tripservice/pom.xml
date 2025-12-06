@@ -100,11 +100,6 @@
 		  <version>1.18.30</version>
 		  <scope>provided</scope>
 		</dependency>
-		<dependency>
-		  <groupId>com.resend</groupId>
-		  <artifactId>resend-java</artifactId>
-		  <version>1.0.0</version>
-		</dependency>
 
     </dependencies>
 
