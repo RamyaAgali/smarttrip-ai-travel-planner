@@ -34,7 +34,7 @@ public class EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             
-            helper.setFrom("smarttripteam@gmail.com","SmartTrip ✈");
+            helper.setFrom("SmartTrip <9d7735001@smtp-brevo.com>","SmartTrip ✈");
             helper.setTo(email);
             helper.setSubject("SmartTrip ✈ Payment Successful – Your Trip to " + destination);
 
@@ -99,7 +99,7 @@ public class EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             
-            helper.setFrom("smarttripteam@gmail.com","SmartTrip ✈");
+            helper.setFrom("SmartTrip <9d7735001@smtp-brevo.com>","SmartTrip ✈");
             helper.setTo(email);
             helper.setSubject("SmartTrip ⚠ Payment Failed – Trip to " + destination);
 
@@ -149,7 +149,7 @@ public class EmailService {
             MimeMessage msg = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
 
-            helper.setFrom("smarttripteam@gmail.com","SmartTrip ✈");
+            helper.setFrom("SmartTrip <9d7735001@smtp-brevo.com>","SmartTrip ✈");
             helper.setTo(email);
             helper.setSubject("SmartTrip 💸 Refund Initiated – " + destination);
 
@@ -187,7 +187,7 @@ public class EmailService {
             MimeMessage msg = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
 
-            helper.setFrom("smarttripteam@gmail.com","SmartTrip ✈");
+            helper.setFrom("SmartTrip <9d7735001@smtp-brevo.com>","SmartTrip ✈");
             helper.setTo(email);
             helper.setSubject("SmartTrip ❌ Trip Cancelled – " + destination);
 
@@ -225,7 +225,7 @@ public class EmailService {
             MimeMessage msg = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
             
-            helper.setFrom("smarttripteam@gmail.com","SmartTrip ✈");
+            helper.setFrom("SmartTrip <9d7735001@smtp-brevo.com>","SmartTrip ✈");
             helper.setTo(email);
             helper.setSubject("SmartTrip 🔁 Trip Rebooked – " + destination);
 
@@ -268,7 +268,7 @@ public class EmailService {
             MimeMessage msg = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
 
-            helper.setFrom("smarttripteam@gmail.com","SmartTrip ✈");
+            helper.setFrom("SmartTrip <9d7735001@smtp-brevo.com>","SmartTrip ✈");
             helper.setTo(email);
             helper.setSubject("SmartTrip 🧳 Trip Booked – Complete Payment to Confirm " + destination);
 

@@ -23,10 +23,10 @@ spring:
         hbm2ddl.create_namespaces: true
 
   mail:
-    host: smtp.gmail.com
+    host: smtp-relay.brevo.com
     port: 587
-    username: ${SMTP_USERNAME}
-    password: ${SMTP_PASSWORD}
+    username: ${BREVO_USERNAME}
+    password: ${BREVO_PASSWORD}
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
