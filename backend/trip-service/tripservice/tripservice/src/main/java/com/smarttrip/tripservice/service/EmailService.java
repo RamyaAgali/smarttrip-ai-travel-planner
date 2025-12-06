@@ -384,8 +384,7 @@ public class EmailService {
                     email,
                     subject,
                     htmlContent,
-                    pdfBytes,
-                    "SmartTrip-Invoice.pdf"
+                    pdfBytes
             );
 
             System.out.println("✅ Payment confirmation email sent (with invoice) to " + email);
