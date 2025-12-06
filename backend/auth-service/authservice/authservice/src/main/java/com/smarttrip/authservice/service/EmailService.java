@@ -15,6 +15,7 @@ public class EmailService {
 
     public void sendPasswordResetEmail(String to, String resetLink) {
         SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("smarttripteam@gmail.com");
         message.setTo(to);
         message.setSubject("SmartTrip - Password Reset");
         message.setText("Hello,\n\nClick the link below to reset your password:\n\n"

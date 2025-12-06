@@ -126,6 +126,7 @@ public class PaymentController {
                     payment.getCurrency(),
                     trip.getStartDate(),
                     trip.getEndDate(),
+                    trip.getTravelMode(),
                     pdfBytes
             );
 
@@ -182,6 +183,7 @@ public class PaymentController {
                     paymentRecord.getCurrency(),
                     trip.getStartDate(),
                     trip.getEndDate(),
+                    trip.getTravelMode(),
                     null // or invoice PDF bytes if available
                 );
 
