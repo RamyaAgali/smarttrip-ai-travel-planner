@@ -22,14 +22,15 @@ spring:
         default_schema: trip_schema
         hbm2ddl.create_namespaces: true
 
-#  mail:
-#    host: smtp.resend.com
-#    port: 587
-#    username: apikey
-#    password: ${RESEND_API_KEY}
-#    properties:
-#      mail.smtp.auth: true
-#      mail.smtp.starttls.enable: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${SMTP_USERNAME}
+    password: ${SMTP_PASSWORD}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
       
 
 geoapify:
@@ -72,6 +73,3 @@ logging:
   level:
     root: INFO
     
-resend:
-  api-key: ${RESEND_API_KEY}
-  from-email: ${RESEND_FROM_EMAIL}
