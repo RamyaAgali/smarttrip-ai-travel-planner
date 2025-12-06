@@ -22,13 +22,14 @@ spring:
   application:
    name: authservice
   mail:
-    host: smtp.gmail.com
+    host: smtp.render.com
     port: 587
     username: ${SMTP_USERNAME}
     password: ${SMTP_PASSWORD}
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
 
 jwt:
   secret: ${JWT_SECRET}
