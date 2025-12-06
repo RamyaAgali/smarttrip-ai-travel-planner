@@ -36,6 +36,9 @@ public class SendGridClient {
             request.setBody(mail.build());
 
             Response response = sg.api(request);
+            System.out.println("📨 SendGrid Status: " + response.getStatusCode());
+            System.out.println("📨 SendGrid Body: " + response.getBody());
+            System.out.println("📨 SendGrid Headers: " + response.getHeaders());
 
             System.out.println("📨 SendGrid Status: " + response.getStatusCode());
             return response.getStatusCode() >= 200 && response.getStatusCode() < 300;
@@ -80,7 +83,10 @@ public class SendGridClient {
             request.setEndpoint("mail/send");
             request.setBody(mail.build());
 
-            sg.api(request);
+            Response response = sg.api(request);
+            System.out.println("📨 SendGrid Status: " + response.getStatusCode());
+            System.out.println("📨 SendGrid Body: " + response.getBody());
+            System.out.println("📨 SendGrid Headers: " + response.getHeaders());
 
             System.out.println("📨 SendGrid: Email sent with attachment to " + to);
 
