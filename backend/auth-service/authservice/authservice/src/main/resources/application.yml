@@ -21,13 +21,13 @@ spring:
   
   application:
    name: authservice
-  mail:
-    host: smtp-relay.brevo.com
-    port: 2525
-    username: ${BREVO_USERNAME}
-    password: ${BREVO_PASSWORD}
-    properties:
-      mail.smtp.auth: true
+#  mail:
+#    host: smtp-relay.brevo.com
+#    port: 2525
+#    username: ${BREVO_USERNAME}
+#    password: ${BREVO_PASSWORD}
+#    properties:
+#      mail.smtp.auth: true
      
 
 jwt:

@@ -22,13 +22,13 @@ spring:
         default_schema: trip_schema
         hbm2ddl.create_namespaces: true
 
-  mail:
-    host: smtp-relay.brevo.com
-    port: 2525
-    username: ${BREVO_USERNAME}
-    password: ${BREVO_PASSWORD}
-    properties:
-      mail.smtp.auth: true
+#  mail:
+#    host: smtp-relay.brevo.com
+#    port: 2525
+#    username: ${BREVO_USERNAME}
+#    password: ${BREVO_PASSWORD}
+#    properties:
+#      mail.smtp.auth: true
 
 geoapify:
   key: ${GEOAPIFY_KEY}
