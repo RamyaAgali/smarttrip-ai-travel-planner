@@ -355,30 +355,39 @@ public class EmailService {
             String subject = "SmartTrip ✈ Payment Successful – Your Trip to " + destination;
 
             String htmlContent = """
-                <div style="font-family: Arial, sans-serif; background-color:#f4f8fb; padding:20px;">
-                  <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.1)">
-                    <div style="background-color:#2563eb; color:white; padding:15px; text-align:center;">
-                      <h2>SmartTrip 🌍</h2>
-                      <p>Your Travel Companion for Smart Planning</p>
-                    </div>
-                    <div style="padding:20px;">
-                      <h3 style="color:#2563eb;">Hi Traveler,</h3>
-                      <p>Your payment for <strong>%s</strong> has been successfully processed! 🎉</p>
-                      <table style="width:100%%; margin:15px 0;">
-                        <tr><td><strong>Destination:</strong></td><td>%s</td></tr>
-                        <tr><td><strong>Travel Dates:</strong></td><td>%s → %s</td></tr>
-                        <tr><td><strong>Travel Mode:</strong></td><td>%s</td></tr>
-                        <tr><td><strong>Amount:</strong></td><td>%s %.2f</td></tr>
-                        <tr><td><strong>Status:</strong></td><td style="color:green;">Confirmed ✅</td></tr>
-                      </table>
-                      <p>Your invoice is attached as PDF.</p>
-                      <div style="text-align:center; margin-top:25px;">
-                        <a href="https://smarttrip.onrender.com/my-trips" style="background:#2563eb; color:white; padding:10px 18px; border-radius:6px; text-decoration:none;">View My Trips</a>
+                  <div style="font-family: Arial, sans-serif; background-color:#f4f8fb; padding:20px;">
+                    <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.1)">
+                      <div style="background-color:#2563eb; color:white; padding:15px; text-align:center;">
+                        <h2>SmartTrip 🌍</h2>
+                        <p style="margin:0;">Your Travel Companion for Smart Planning</p>
+                      </div>
+                      <div style="padding:20px;">
+                        <h3 style="color:#2563eb;">Hi Traveler,</h3>
+                        <p>Your payment for <strong>%s</strong> has been successfully processed! 🎉</p>
+                        <table style="width:100%%; border-collapse:collapse; margin:15px 0;">
+                          <tr><td><strong>Destination:</strong></td><td>%s</td></tr>
+                          <tr><td><strong>Travel Dates:</strong></td><td>%s → %s</td></tr>
+                          <tr><td><strong>Travel Mode:</strong></td><td>%s</td></tr>
+                          <tr><td><strong>Payment Amount:</strong></td><td>%s %.2f</td></tr>
+                          <tr><td><strong>Status:</strong></td><td style="color:green;">Confirmed ✅</td></tr>
+                        </table>
+                        <p>We've attached your <strong>Trip Invoice PDF</strong> below. You can also view your full itinerary anytime from your SmartTrip dashboard.</p>
+                        <div style="text-align:center; margin-top:25px;">
+                          <a href="http://localhost:5173/my-trips" style="background:#2563eb; color:white; padding:10px 18px; border-radius:6px; text-decoration:none;">View My Trips</a>
+                        </div>
+                        </div>
+                        <p style="margin-top:20px; font-size:13px; color:#555;">
+                          ⚠ <strong>Note:</strong> Cancelled trips will be automatically removed from your SmartTrip dashboard after 24 hours.
+                        </p>
+                      </div>
+                      </div>
+                      <div style="background:#f1f5f9; padding:15px; text-align:center; font-size:13px; color:#666;">
+                        <p>Thank you for trusting <strong>SmartTrip</strong> with your journey! ✈</p>
+                        <p>© 2025 SmartTrip Inc. All Rights Reserved.</p>
                       </div>
                     </div>
                   </div>
-                </div>
-            """.formatted(destination, destination, startDate, endDate, travelMode, currency, amount);
+                  """.formatted(destination, destination, startDate, endDate, travelMode, currency, amount);
 
             sendGridClient.sendEmailWithAttachment(
                     email,
@@ -400,20 +409,36 @@ public class EmailService {
             String subject = "SmartTrip ⚠ Payment Failed – " + destination;
 
             String html = """
-                <div style="font-family: Arial, sans-serif; background:#fff5f5; padding:20px;">
-                  <div style="max-width:600px; margin:auto; background:#fff; border-radius:10px;">
-                    <h2 style="background:#dc2626; color:white; padding:15px; text-align:center;">Payment Failed ❌</h2>
-                    <div style="padding:20px;">
-                      <p>We couldn’t process your payment for <strong>%s</strong>.</p>
-                      <p><strong>Reason:</strong> %s</p>
-                      <p>Amount: %s %.2f</p>
-                      <div style="text-align:center; margin-top:25px;">
-                        <a href="https://smarttrip.onrender.com/my-trips" style="background:#dc2626; color:white; padding:10px 18px; border-radius:6px; text-decoration:none;">Retry Payment</a>
+                    <div style="font-family: Arial, sans-serif; background-color:#fff5f5; padding:20px;">
+                      <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.1)">
+                        <div style="background-color:#dc2626; color:white; padding:15px; text-align:center;">
+                          <h2>Payment Failed ❌</h2>
+                        </div>
+                        <div style="padding:20px;">
+                          <h3 style="color:#dc2626;">Hello Traveler,</h3>
+                          <p>We’re sorry, but your payment for the trip to <strong>%s</strong> could not be processed.</p>
+                          <table style="width:100%%; border-collapse:collapse; margin:15px 0;">
+                            <tr><td><strong>Destination:</strong></td><td>%s</td></tr>
+                            <tr><td><strong>Travel Mode:</strong></td><td>%s</td></tr>
+                            <tr><td><strong>Amount Attempted:</strong></td><td>%s %.2f</td></tr>
+                            <tr><td><strong>Reason:</strong></td><td style="color:#dc2626;">%s</td></tr>
+                          </table>
+                          <p>Please try again by logging into your SmartTrip dashboard and re-attempting the payment.</p>
+                          <div style="text-align:center; margin-top:25px;">
+                            <a href="http://localhost:5173/my-trips" style="background:#dc2626; color:white; padding:10px 18px; border-radius:6px; text-decoration:none;">Retry Payment</a>
+                          </div>
+                          </div>
+                          <p style="margin-top:20px; font-size:13px; color:#555;">
+                            ⚠ <strong>Note:</strong> Cancelled trips will be automatically removed from your SmartTrip dashboard after 24 hours.
+                          </p>
+                        </div>
+                        </div>
+                        <div style="background:#fef2f2; padding:15px; text-align:center; font-size:13px; color:#666;">
+                          <p>Need help? Contact support@smarttrip.com ✉</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-            """.formatted(destination, reason, currency, amount);
+                    """ .formatted(destination, reason, currency, amount);
 
             sendGridClient.sendEmail(email, subject, html);
             System.out.println("⚠ Payment failure email sent to " + email);
@@ -429,13 +454,26 @@ public class EmailService {
             String subject = "SmartTrip 💸 Refund Initiated – " + destination;
 
             String html = """
-                <div style="font-family: Arial;">
-                  <h2>Refund Initiated 💰</h2>
-                  <p>Your trip to <strong>%s</strong> has been cancelled.</p>
-                  <p>Refund Amount: %s %.2f</p>
-                  <p>Order ID: %s</p>
-                </div>
-            """.formatted(destination, currency, amount, orderId);
+                    <div style="font-family: Arial, sans-serif; background:#f0fdf4; padding:20px;">
+                    <div style="max-width:600px; margin:auto; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.08)">
+                      <div style="background:#16a34a; color:white; padding:15px; text-align:center;">
+                        <h2>Refund Initiated 💰</h2>
+                      </div>
+                      <div style="padding:20px;">
+                        <p>Your payment for the trip to <strong>%s</strong> (Order ID: %s) has been successfully cancelled.</p>
+                        <p>A refund of <strong>%s %.2f</strong> will be credited to your original payment method within 3–5 business days.</p>
+                        <div style="text-align:center; margin-top:20px;">
+                          <a href="http://localhost:5173/my-trips" style="background:#16a34a; color:white; padding:10px 18px; border-radius:6px; text-decoration:none;">View My Trips</a>
+                        </div>
+                        </div>
+                        <p style="margin-top:20px; font-size:13px; color:#555;">
+                          ⚠ <strong>Note:</strong> Cancelled trips will be automatically removed from your SmartTrip dashboard after 24 hours.
+                        </p>
+                      </div>
+                      </div>
+                    </div>
+                  </div>
+              """.formatted(destination, currency, amount, orderId);
 
             sendGridClient.sendEmail(email, subject, html);
             System.out.println("💸 Refund email sent to " + email);
@@ -451,11 +489,26 @@ public class EmailService {
             String subject = "SmartTrip ❌ Trip Cancelled – " + destination;
 
             String html = """
-                <div style="font-family: Arial;">
-                  <h2>Trip Cancelled ❌</h2>
-                  <p>Your trip to <strong>%s</strong> (%s → %s) has been cancelled.</p>
-                </div>
-            """.formatted(destination, startDate, endDate);
+                    <div style="font-family: Arial, sans-serif; background:#fff7ed; padding:20px;">
+                    <div style="max-width:600px; margin:auto; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.08)">
+                      <div style="background:#f97316; color:white; padding:15px; text-align:center;">
+                        <h2>Trip Cancelled ❌</h2>
+                      </div>
+                      <div style="padding:20px;">
+                        <p>Your trip to <strong>%s</strong> scheduled from <strong>%s → %s</strong> has been successfully cancelled.</p>
+                        <p>If any payment was made, the refund process will be initiated and you’ll receive a separate confirmation email.</p>
+                        <div style="text-align:center; margin-top:20px;">
+                          <a href="http://localhost:5173/my-trips" style="background:#f97316; color:white; padding:10px 18px; border-radius:6px; text-decoration:none;">View My Trips</a>
+                        </div>
+                        </div>
+                        <p style="margin-top:20px; font-size:13px; color:#555;">
+                          ⚠ <strong>Note:</strong> Cancelled trips will be automatically removed from your SmartTrip dashboard after 24 hours.
+                        </p>
+                      </div>
+                      </div>
+                    </div>
+                  </div>
+              """.formatted(destination, startDate, endDate);
 
             sendGridClient.sendEmail(email, subject, html);
             System.out.println("📨 Cancellation email sent");
@@ -471,12 +524,31 @@ public class EmailService {
             String subject = "SmartTrip 🔁 Trip Rebooked – " + destination;
 
             String html = """
-                <div style="font-family: Arial;">
-                  <h2>Trip Rebooked 🔁</h2>
-                  <p>Your trip to <strong>%s</strong> is rebooked:</p>
-                  <p>%s → %s</p>
-                </div>
-            """.formatted(destination, startDate, endDate);
+                    <div style="font-family: Arial, sans-serif; background:#ecfdf5; padding:20px;">
+                    <div style="max-width:600px; margin:auto; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.08)">
+                      <div style="background:#059669; color:white; padding:15px; text-align:center;">
+                        <h2>Trip Rebooked Successfully 🔁</h2>
+                      </div>
+                      <div style="padding:20px;">
+                        <p>Hi Traveler,</p>
+                        <p>Your trip to <strong>%s</strong> has been successfully <strong>rebooked</strong> within 24 hours of cancellation! 🎉</p>
+                        <p>Your travel dates remain the same:</p>
+                        <p><strong>%s → %s</strong></p>
+                        <p>You can view your updated itinerary from your dashboard.</p>
+                        <div style="text-align:center; margin-top:20px;">
+                          <a href="http://localhost:5173/my-trips" style="background:#059669; color:white; padding:10px 18px; border-radius:6px; text-decoration:none;">View My Trips</a>
+                        </div>
+                        <p style="margin-top:20px; font-size:13px; color:#555;">
+                          ⚠ <strong>Note:</strong> Cancelled trips will be automatically removed from your SmartTrip dashboard after 24 hours.
+                        </p>
+                      </div>
+                      <div style="background:#f1f5f9; padding:15px; text-align:center; font-size:13px; color:#666;">
+                        <p>Thank you for choosing <strong>SmartTrip</strong>! ✈</p>
+                        <p>© 2025 SmartTrip Inc. All Rights Reserved.</p>
+                      </div>
+                    </div>
+                  </div>
+              """.formatted(destination, startDate, endDate);
 
             sendGridClient.sendEmail(email, subject, html);
             System.out.println("🔁 Rebook email sent");
@@ -492,14 +564,35 @@ public class EmailService {
             String subject = "SmartTrip 🧳 Complete Payment – " + destination;
 
             String html = """
-                <div style="font-family: Arial;">
-                  <h2>Trip Booked ✈</h2>
-                  <p>Destination: %s</p>
-                  <p>Dates: %s → %s</p>
-                  <p>Amount Due: %s %.2f</p>
-                  <p>Status: Awaiting Payment</p>
-                </div>
-            """.formatted(destination, startDate, endDate, currency, amount);
+                    <div style="font-family: Arial, sans-serif; background:#eef2ff; padding:20px;">
+                    <div style="max-width:600px; margin:auto; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.08)">
+                      <div style="background:#4f46e5; color:white; padding:15px; text-align:center;">
+                        <h2>Trip Booked Successfully ✈</h2>
+                      </div>
+                      <div style="padding:20px;">
+                        <p>Hi Traveler,</p>
+                        <p>Your trip to <strong>%s</strong> has been <strong>booked</strong> successfully.</p>
+                        <p>To confirm your travel, please complete the payment as soon as possible.</p>
+                        <table style="width:100%%; border-collapse:collapse; margin:15px 0;">
+                          <tr><td><strong>Destination:</strong></td><td>%s</td></tr>
+                          <tr><td><strong>Travel Dates:</strong></td><td>%s → %s</td></tr>
+                          <tr><td><strong>Amount Due:</strong></td><td>%s %.2f</td></tr>
+                          <tr><td><strong>Status:</strong></td><td style="color:#f59e0b;">Awaiting Payment ⏳</td></tr>
+                        </table>
+                        <div style="text-align:center; margin-top:25px;">
+                          <a href="http://localhost:5173/my-trips" style="background:#4f46e5; color:white; padding:10px 18px; border-radius:6px; text-decoration:none;">Complete Payment</a>
+                        </div>
+                        <p style="margin-top:20px; font-size:13px; color:#555;">
+                          ⚠ <strong>Note:</strong> Cancelled trips will be automatically removed from your SmartTrip dashboard after 24 hours.
+                        </p>
+                      </div>
+                      <div style="background:#f9fafb; padding:15px; text-align:center; font-size:13px; color:#666;">
+                        <p>Thank you for planning your journey with <strong>SmartTrip</strong> 🌍</p>
+                        <p>© 2025 SmartTrip Inc. All Rights Reserved.</p>
+                      </div>
+                    </div>
+                  </div>
+              """.formatted(destination, startDate, endDate, currency, amount);
 
             sendGridClient.sendEmail(email, subject, html);
             System.out.println("🧳 Pending payment email sent");
