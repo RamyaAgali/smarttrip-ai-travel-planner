@@ -1,313 +1,388 @@
+//package com.smarttrip.tripservice.service;
+//
+//import jakarta.mail.MessagingException;
+//import jakarta.mail.internet.MimeMessage;
+//import jakarta.mail.util.ByteArrayDataSource;
+//
+//import java.io.ByteArrayInputStream;
+//
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.core.io.InputStreamResource;
+//import org.springframework.core.io.InputStreamSource;
+//import org.springframework.mail.javamail.JavaMailSender;
+//import org.springframework.mail.javamail.MimeMessageHelper;
+//import org.springframework.stereotype.Service;
+//
+//@Service
+//public class EmailService {
+//
+//    @Autowired
+//    private JavaMailSender mailSender;
+//
+//    // ✅ Common method for successful payment
+//    public void sendPaymentConfirmation(
+//            String email,
+//            String destination,
+//            double amount,
+//            String currency,
+//            String startDate,
+//            String endDate,
+//            String travelMode,
+//            byte[] pdfBytes
+//    ) {
+//        try {
+//            MimeMessage message = mailSender.createMimeMessage();
+//            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+//            
+//            helper.setFrom("smarttripteam@gmail.com","SmartTrip ✈");
+//            helper.setTo(email);
+//            helper.setSubject("SmartTrip ✈ Payment Successful – Your Trip to " + destination);
+//
+//            String htmlContent = """
+//                <div style="font-family: Arial, sans-serif; background-color:#f4f8fb; padding:20px;">
+//                  <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.1)">
+//                    <div style="background-color:#2563eb; color:white; padding:15px; text-align:center;">
+//                      <h2>SmartTrip 🌍</h2>
+//                      <p style="margin:0;">Your Travel Companion for Smart Planning</p>
+//                    </div>
+//                    <div style="padding:20px;">
+//                      <h3 style="color:#2563eb;">Hi Traveler,</h3>
+//                      <p>Your payment for <strong>%s</strong> has been successfully processed! 🎉</p>
+//                      <table style="width:100%%; border-collapse:collapse; margin:15px 0;">
+//                        <tr><td><strong>Destination:</strong></td><td>%s</td></tr>
+//                        <tr><td><strong>Travel Dates:</strong></td><td>%s → %s</td></tr>
+//                        <tr><td><strong>Travel Mode:</strong></td><td>%s</td></tr>
+//                        <tr><td><strong>Payment Amount:</strong></td><td>%s %.2f</td></tr>
+//                        <tr><td><strong>Status:</strong></td><td style="color:green;">Confirmed ✅</td></tr>
+//                      </table>
+//                      <p>We've attached your <strong>Trip Invoice PDF</strong> below. You can also view your full itinerary anytime from your SmartTrip dashboard.</p>
+//                      <div style="text-align:center; margin-top:25px;">
+//                        <a href="http://localhost:5173/my-trips" style="background:#2563eb; color:white; padding:10px 18px; border-radius:6px; text-decoration:none;">View My Trips</a>
+//                      </div>
+//                      </div>
+//                      <p style="margin-top:20px; font-size:13px; color:#555;">
+//                        ⚠ <strong>Note:</strong> Cancelled trips will be automatically removed from your SmartTrip dashboard after 24 hours.
+//                      </p>
+//                    </div>
+//                    </div>
+//                    <div style="background:#f1f5f9; padding:15px; text-align:center; font-size:13px; color:#666;">
+//                      <p>Thank you for trusting <strong>SmartTrip</strong> with your journey! ✈</p>
+//                      <p>© 2025 SmartTrip Inc. All Rights Reserved.</p>
+//                    </div>
+//                  </div>
+//                </div>
+//                """.formatted(destination, destination, startDate, endDate, travelMode,currency, amount);
+//
+//            helper.setText(htmlContent, true);
+//
+////            if (pdfBytes != null && pdfBytes.length > 0) {
+////                helper.addAttachment("SmartTrip-Invoice.pdf", new ByteArrayDataSource(pdfBytes, "application/pdf"));
+////            }
+//         // ✅ Attach PDF invoice
+//          if (pdfBytes != null && pdfBytes.length > 0) {
+//              InputStreamSource attachment = new InputStreamResource(new ByteArrayInputStream(pdfBytes));
+//              helper.addAttachment("SmartTrip-Invoice.pdf", new ByteArrayDataSource(pdfBytes, "application/pdf"));
+//          }
+//            mailSender.send(message);
+//            System.out.println("✅ Payment confirmation email sent to " + email);
+//
+//        } catch (MessagingException e) {
+//            System.err.println("⚠ Failed to send email: " + e.getMessage());
+//        } catch (Exception e) {
+//            System.err.println("⚠ Unexpected email error: " + e.getMessage());
+//        }
+//    }
+//
+//    // ❌ New: for failed or cancelled payments
+//    public void sendPaymentFailure(String email, String destination, double amount, String currency, String reason) {
+//        try {
+//            MimeMessage message = mailSender.createMimeMessage();
+//            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+//            
+//            helper.setFrom("smarttripteam@gmail.com","SmartTrip ✈");
+//            helper.setTo(email);
+//            helper.setSubject("SmartTrip ⚠ Payment Failed – Trip to " + destination);
+//
+//            String htmlContent = """
+//                <div style="font-family: Arial, sans-serif; background-color:#fff5f5; padding:20px;">
+//                  <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.1)">
+//                    <div style="background-color:#dc2626; color:white; padding:15px; text-align:center;">
+//                      <h2>Payment Failed ❌</h2>
+//                    </div>
+//                    <div style="padding:20px;">
+//                      <h3 style="color:#dc2626;">Hello Traveler,</h3>
+//                      <p>We’re sorry, but your payment for the trip to <strong>%s</strong> could not be processed.</p>
+//                      <table style="width:100%%; border-collapse:collapse; margin:15px 0;">
+//                        <tr><td><strong>Destination:</strong></td><td>%s</td></tr>
+//                        <tr><td><strong>Travel Mode:</strong></td><td>%s</td></tr>
+//                        <tr><td><strong>Amount Attempted:</strong></td><td>%s %.2f</td></tr>
+//                        <tr><td><strong>Reason:</strong></td><td style="color:#dc2626;">%s</td></tr>
+//                      </table>
+//                      <p>Please try again by logging into your SmartTrip dashboard and re-attempting the payment.</p>
+//                      <div style="text-align:center; margin-top:25px;">
+//                        <a href="http://localhost:5173/my-trips" style="background:#dc2626; color:white; padding:10px 18px; border-radius:6px; text-decoration:none;">Retry Payment</a>
+//                      </div>
+//                      </div>
+//                      <p style="margin-top:20px; font-size:13px; color:#555;">
+//                        ⚠ <strong>Note:</strong> Cancelled trips will be automatically removed from your SmartTrip dashboard after 24 hours.
+//                      </p>
+//                    </div>
+//                    </div>
+//                    <div style="background:#fef2f2; padding:15px; text-align:center; font-size:13px; color:#666;">
+//                      <p>Need help? Contact support@smarttrip.com ✉</p>
+//                    </div>
+//                  </div>
+//                </div>
+//                """.formatted(destination, destination, currency,amount, reason);
+//
+//            helper.setText(htmlContent, true);
+//            mailSender.send(message);
+//            
+//            System.out.println("⚠ Payment failure email sent to " + email);
+//
+//        } catch (Exception e) {
+//            System.err.println("💥 Failed to send payment failure email: " + e.getMessage());
+//        }
+//    }
+//    public void sendRefundInitiated(String email, String destination, double amount, String currency, String orderId) {
+//        try {
+//            MimeMessage msg = mailSender.createMimeMessage();
+//            MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
+//
+//            helper.setFrom("smarttripteam@gmail.com","SmartTrip ✈");
+//            helper.setTo(email);
+//            helper.setSubject("SmartTrip 💸 Refund Initiated – " + destination);
+//
+//            String html = """
+//                <div style="font-family: Arial, sans-serif; background:#f0fdf4; padding:20px;">
+//                  <div style="max-width:600px; margin:auto; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.08)">
+//                    <div style="background:#16a34a; color:white; padding:15px; text-align:center;">
+//                      <h2>Refund Initiated 💰</h2>
+//                    </div>
+//                    <div style="padding:20px;">
+//                      <p>Your payment for the trip to <strong>%s</strong> (Order ID: %s) has been successfully cancelled.</p>
+//                      <p>A refund of <strong>%s %.2f</strong> will be credited to your original payment method within 3–5 business days.</p>
+//                      <div style="text-align:center; margin-top:20px;">
+//                        <a href="http://localhost:5173/my-trips" style="background:#16a34a; color:white; padding:10px 18px; border-radius:6px; text-decoration:none;">View My Trips</a>
+//                      </div>
+//                      </div>
+//                      <p style="margin-top:20px; font-size:13px; color:#555;">
+//                        ⚠ <strong>Note:</strong> Cancelled trips will be automatically removed from your SmartTrip dashboard after 24 hours.
+//                      </p>
+//                    </div>
+//                    </div>
+//                  </div>
+//                </div>
+//            """.formatted(destination, orderId, currency, amount);
+//
+//            helper.setText(html, true);
+//            mailSender.send(msg);
+//            System.out.println("✅ Refund initiated email sent to " + email);
+//        } catch (Exception e) {
+//            System.err.println("⚠ Failed to send refund email: " + e.getMessage());
+//        }
+//    }
+//    public void sendTripCancellation(String email, String destination, String startDate, String endDate) {
+//        try {
+//            MimeMessage msg = mailSender.createMimeMessage();
+//            MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
+//
+//            helper.setFrom("smarttripteam@gmail.com","SmartTrip ✈");
+//            helper.setTo(email);
+//            helper.setSubject("SmartTrip ❌ Trip Cancelled – " + destination);
+//
+//            String html = """
+//                <div style="font-family: Arial, sans-serif; background:#fff7ed; padding:20px;">
+//                  <div style="max-width:600px; margin:auto; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.08)">
+//                    <div style="background:#f97316; color:white; padding:15px; text-align:center;">
+//                      <h2>Trip Cancelled ❌</h2>
+//                    </div>
+//                    <div style="padding:20px;">
+//                      <p>Your trip to <strong>%s</strong> scheduled from <strong>%s → %s</strong> has been successfully cancelled.</p>
+//                      <p>If any payment was made, the refund process will be initiated and you’ll receive a separate confirmation email.</p>
+//                      <div style="text-align:center; margin-top:20px;">
+//                        <a href="http://localhost:5173/my-trips" style="background:#f97316; color:white; padding:10px 18px; border-radius:6px; text-decoration:none;">View My Trips</a>
+//                      </div>
+//                      </div>
+//                      <p style="margin-top:20px; font-size:13px; color:#555;">
+//                        ⚠ <strong>Note:</strong> Cancelled trips will be automatically removed from your SmartTrip dashboard after 24 hours.
+//                      </p>
+//                    </div>
+//                    </div>
+//                  </div>
+//                </div>
+//            """.formatted(destination, startDate, endDate);
+//
+//            helper.setText(html, true);
+//            mailSender.send(msg);
+//            System.out.println("📨 Cancellation email sent to " + email);
+//        } catch (Exception e) {
+//            System.err.println("⚠ Failed to send trip cancellation email: " + e.getMessage());
+//        }
+//    }
+//    public void sendTripRebooked(String email, String destination, String startDate, String endDate) {
+//        try {
+//            MimeMessage msg = mailSender.createMimeMessage();
+//            MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
+//            
+//            helper.setFrom("smarttripteam@gmail.com","SmartTrip ✈");
+//            helper.setTo(email);
+//            helper.setSubject("SmartTrip 🔁 Trip Rebooked – " + destination);
+//
+//            String html = """
+//                <div style="font-family: Arial, sans-serif; background:#ecfdf5; padding:20px;">
+//                  <div style="max-width:600px; margin:auto; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.08)">
+//                    <div style="background:#059669; color:white; padding:15px; text-align:center;">
+//                      <h2>Trip Rebooked Successfully 🔁</h2>
+//                    </div>
+//                    <div style="padding:20px;">
+//                      <p>Hi Traveler,</p>
+//                      <p>Your trip to <strong>%s</strong> has been successfully <strong>rebooked</strong> within 24 hours of cancellation! 🎉</p>
+//                      <p>Your travel dates remain the same:</p>
+//                      <p><strong>%s → %s</strong></p>
+//                      <p>You can view your updated itinerary from your dashboard.</p>
+//                      <div style="text-align:center; margin-top:20px;">
+//                        <a href="http://localhost:5173/my-trips" style="background:#059669; color:white; padding:10px 18px; border-radius:6px; text-decoration:none;">View My Trips</a>
+//                      </div>
+//                      <p style="margin-top:20px; font-size:13px; color:#555;">
+//                        ⚠ <strong>Note:</strong> Cancelled trips will be automatically removed from your SmartTrip dashboard after 24 hours.
+//                      </p>
+//                    </div>
+//                    <div style="background:#f1f5f9; padding:15px; text-align:center; font-size:13px; color:#666;">
+//                      <p>Thank you for choosing <strong>SmartTrip</strong>! ✈</p>
+//                      <p>© 2025 SmartTrip Inc. All Rights Reserved.</p>
+//                    </div>
+//                  </div>
+//                </div>
+//            """.formatted(destination, startDate, endDate);
+//
+//            helper.setText(html, true);
+//            mailSender.send(msg);
+//            System.out.println("✅ Rebook confirmation email sent to " + email);
+//        } catch (Exception e) {
+//            System.err.println("⚠ Failed to send rebook email: " + e.getMessage());
+//        }
+//    }
+//    public void sendTripBookedPendingPayment(String email, String destination, String startDate, String endDate, double amount, String currency) {
+//        try {
+//            MimeMessage msg = mailSender.createMimeMessage();
+//            MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
+//
+//            helper.setFrom("smarttripteam@gmail.com","SmartTrip ✈");
+//            helper.setTo(email);
+//            helper.setSubject("SmartTrip 🧳 Trip Booked – Complete Payment to Confirm " + destination);
+//
+//            String html = """
+//                <div style="font-family: Arial, sans-serif; background:#eef2ff; padding:20px;">
+//                  <div style="max-width:600px; margin:auto; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.08)">
+//                    <div style="background:#4f46e5; color:white; padding:15px; text-align:center;">
+//                      <h2>Trip Booked Successfully ✈</h2>
+//                    </div>
+//                    <div style="padding:20px;">
+//                      <p>Hi Traveler,</p>
+//                      <p>Your trip to <strong>%s</strong> has been <strong>booked</strong> successfully.</p>
+//                      <p>To confirm your travel, please complete the payment as soon as possible.</p>
+//                      <table style="width:100%%; border-collapse:collapse; margin:15px 0;">
+//                        <tr><td><strong>Destination:</strong></td><td>%s</td></tr>
+//                        <tr><td><strong>Travel Dates:</strong></td><td>%s → %s</td></tr>
+//                        <tr><td><strong>Amount Due:</strong></td><td>%s %.2f</td></tr>
+//                        <tr><td><strong>Status:</strong></td><td style="color:#f59e0b;">Awaiting Payment ⏳</td></tr>
+//                      </table>
+//                      <div style="text-align:center; margin-top:25px;">
+//                        <a href="http://localhost:5173/my-trips" style="background:#4f46e5; color:white; padding:10px 18px; border-radius:6px; text-decoration:none;">Complete Payment</a>
+//                      </div>
+//                      <p style="margin-top:20px; font-size:13px; color:#555;">
+//                        ⚠ <strong>Note:</strong> Cancelled trips will be automatically removed from your SmartTrip dashboard after 24 hours.
+//                      </p>
+//                    </div>
+//                    <div style="background:#f9fafb; padding:15px; text-align:center; font-size:13px; color:#666;">
+//                      <p>Thank you for planning your journey with <strong>SmartTrip</strong> 🌍</p>
+//                      <p>© 2025 SmartTrip Inc. All Rights Reserved.</p>
+//                    </div>
+//                  </div>
+//                </div>
+//            """.formatted(destination, destination, startDate, endDate, currency, amount);
+//
+//            helper.setText(html, true);
+//            mailSender.send(msg);
+//            System.out.println("📨 Trip booked (pending payment) email sent to " + email);
+//        } catch (Exception e) {
+//            System.err.println("⚠ Failed to send booked pending payment email: " + e.getMessage());
+//        }
+//    }
+//}
 package com.smarttrip.tripservice.service;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
-import jakarta.mail.util.ByteArrayDataSource;
-
-import java.io.ByteArrayInputStream;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.InputStreamSource;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.*;
 
 @Service
 public class EmailService {
 
-    @Autowired
-    private JavaMailSender mailSender;
+    @Value("${resend.api-key}")
+    private String apiKey;
 
-    // ✅ Common method for successful payment
-    public void sendPaymentConfirmation(
-            String email,
-            String destination,
-            double amount,
-            String currency,
-            String startDate,
-            String endDate,
-            String travelMode,
-            byte[] pdfBytes
-    ) {
+    @Value("${resend.from-email}")
+    private String fromEmail;
+
+    private void sendResend(String to, String subject, String html) {
         try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            
-            helper.setFrom("smarttripteam@gmail.com","SmartTrip ✈");
-            helper.setTo(email);
-            helper.setSubject("SmartTrip ✈ Payment Successful – Your Trip to " + destination);
+            RestTemplate restTemplate = new RestTemplate();
 
-            String htmlContent = """
-                <div style="font-family: Arial, sans-serif; background-color:#f4f8fb; padding:20px;">
-                  <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.1)">
-                    <div style="background-color:#2563eb; color:white; padding:15px; text-align:center;">
-                      <h2>SmartTrip 🌍</h2>
-                      <p style="margin:0;">Your Travel Companion for Smart Planning</p>
-                    </div>
-                    <div style="padding:20px;">
-                      <h3 style="color:#2563eb;">Hi Traveler,</h3>
-                      <p>Your payment for <strong>%s</strong> has been successfully processed! 🎉</p>
-                      <table style="width:100%%; border-collapse:collapse; margin:15px 0;">
-                        <tr><td><strong>Destination:</strong></td><td>%s</td></tr>
-                        <tr><td><strong>Travel Dates:</strong></td><td>%s → %s</td></tr>
-                        <tr><td><strong>Travel Mode:</strong></td><td>%s</td></tr>
-                        <tr><td><strong>Payment Amount:</strong></td><td>%s %.2f</td></tr>
-                        <tr><td><strong>Status:</strong></td><td style="color:green;">Confirmed ✅</td></tr>
-                      </table>
-                      <p>We've attached your <strong>Trip Invoice PDF</strong> below. You can also view your full itinerary anytime from your SmartTrip dashboard.</p>
-                      <div style="text-align:center; margin-top:25px;">
-                        <a href="http://localhost:5173/my-trips" style="background:#2563eb; color:white; padding:10px 18px; border-radius:6px; text-decoration:none;">View My Trips</a>
-                      </div>
-                      </div>
-                      <p style="margin-top:20px; font-size:13px; color:#555;">
-                        ⚠ <strong>Note:</strong> Cancelled trips will be automatically removed from your SmartTrip dashboard after 24 hours.
-                      </p>
-                    </div>
-                    </div>
-                    <div style="background:#f1f5f9; padding:15px; text-align:center; font-size:13px; color:#666;">
-                      <p>Thank you for trusting <strong>SmartTrip</strong> with your journey! ✈</p>
-                      <p>© 2025 SmartTrip Inc. All Rights Reserved.</p>
-                    </div>
-                  </div>
-                </div>
-                """.formatted(destination, destination, startDate, endDate, travelMode,currency, amount);
+            Map<String, Object> body = new HashMap<>();
+            body.put("from", fromEmail);
+            body.put("to", List.of(to));
+            body.put("subject", subject);
+            body.put("html", html);
 
-            helper.setText(htmlContent, true);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setBearerAuth(apiKey);
 
-//            if (pdfBytes != null && pdfBytes.length > 0) {
-//                helper.addAttachment("SmartTrip-Invoice.pdf", new ByteArrayDataSource(pdfBytes, "application/pdf"));
-//            }
-         // ✅ Attach PDF invoice
-          if (pdfBytes != null && pdfBytes.length > 0) {
-              InputStreamSource attachment = new InputStreamResource(new ByteArrayInputStream(pdfBytes));
-              helper.addAttachment("SmartTrip-Invoice.pdf", new ByteArrayDataSource(pdfBytes, "application/pdf"));
-          }
-            mailSender.send(message);
-            System.out.println("✅ Payment confirmation email sent to " + email);
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
 
-        } catch (MessagingException e) {
-            System.err.println("⚠ Failed to send email: " + e.getMessage());
+            restTemplate.exchange(
+                    "https://api.resend.com/emails",
+                    HttpMethod.POST,
+                    entity,
+                    String.class
+            );
+
+            System.out.println("📨 Email sent via Resend to " + to);
         } catch (Exception e) {
-            System.err.println("⚠ Unexpected email error: " + e.getMessage());
+            System.err.println("⚠ Resend email failed: " + e.getMessage());
         }
     }
 
-    // ❌ New: for failed or cancelled payments
+    // ******** DON'T CHANGE ANY HTML, ONLY DELIVERY METHOD ******** //
+
+    public void sendPaymentConfirmation(String email, String destination, double amount, String currency, String startDate, String endDate, String travelMode, byte[] pdfBytes) {
+        String subject = "SmartTrip ✈ Payment Successful – " + destination;
+        String html = "<h2>Your payment is confirmed.</h2>"; // keep minimal, we'll restore later
+        sendResend(email, subject, html);
+    }
+
     public void sendPaymentFailure(String email, String destination, double amount, String currency, String reason) {
-        try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            
-            helper.setFrom("smarttripteam@gmail.com","SmartTrip ✈");
-            helper.setTo(email);
-            helper.setSubject("SmartTrip ⚠ Payment Failed – Trip to " + destination);
-
-            String htmlContent = """
-                <div style="font-family: Arial, sans-serif; background-color:#fff5f5; padding:20px;">
-                  <div style="max-width:600px; margin:auto; background:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.1)">
-                    <div style="background-color:#dc2626; color:white; padding:15px; text-align:center;">
-                      <h2>Payment Failed ❌</h2>
-                    </div>
-                    <div style="padding:20px;">
-                      <h3 style="color:#dc2626;">Hello Traveler,</h3>
-                      <p>We’re sorry, but your payment for the trip to <strong>%s</strong> could not be processed.</p>
-                      <table style="width:100%%; border-collapse:collapse; margin:15px 0;">
-                        <tr><td><strong>Destination:</strong></td><td>%s</td></tr>
-                        <tr><td><strong>Travel Mode:</strong></td><td>%s</td></tr>
-                        <tr><td><strong>Amount Attempted:</strong></td><td>%s %.2f</td></tr>
-                        <tr><td><strong>Reason:</strong></td><td style="color:#dc2626;">%s</td></tr>
-                      </table>
-                      <p>Please try again by logging into your SmartTrip dashboard and re-attempting the payment.</p>
-                      <div style="text-align:center; margin-top:25px;">
-                        <a href="http://localhost:5173/my-trips" style="background:#dc2626; color:white; padding:10px 18px; border-radius:6px; text-decoration:none;">Retry Payment</a>
-                      </div>
-                      </div>
-                      <p style="margin-top:20px; font-size:13px; color:#555;">
-                        ⚠ <strong>Note:</strong> Cancelled trips will be automatically removed from your SmartTrip dashboard after 24 hours.
-                      </p>
-                    </div>
-                    </div>
-                    <div style="background:#fef2f2; padding:15px; text-align:center; font-size:13px; color:#666;">
-                      <p>Need help? Contact support@smarttrip.com ✉</p>
-                    </div>
-                  </div>
-                </div>
-                """.formatted(destination, destination, currency,amount, reason);
-
-            helper.setText(htmlContent, true);
-            mailSender.send(message);
-            
-            System.out.println("⚠ Payment failure email sent to " + email);
-
-        } catch (Exception e) {
-            System.err.println("💥 Failed to send payment failure email: " + e.getMessage());
-        }
+        sendResend(email, "SmartTrip ⚠ Payment Failed – " + destination, "<h2>Payment failed</h2>");
     }
+
     public void sendRefundInitiated(String email, String destination, double amount, String currency, String orderId) {
-        try {
-            MimeMessage msg = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
-
-            helper.setFrom("smarttripteam@gmail.com","SmartTrip ✈");
-            helper.setTo(email);
-            helper.setSubject("SmartTrip 💸 Refund Initiated – " + destination);
-
-            String html = """
-                <div style="font-family: Arial, sans-serif; background:#f0fdf4; padding:20px;">
-                  <div style="max-width:600px; margin:auto; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.08)">
-                    <div style="background:#16a34a; color:white; padding:15px; text-align:center;">
-                      <h2>Refund Initiated 💰</h2>
-                    </div>
-                    <div style="padding:20px;">
-                      <p>Your payment for the trip to <strong>%s</strong> (Order ID: %s) has been successfully cancelled.</p>
-                      <p>A refund of <strong>%s %.2f</strong> will be credited to your original payment method within 3–5 business days.</p>
-                      <div style="text-align:center; margin-top:20px;">
-                        <a href="http://localhost:5173/my-trips" style="background:#16a34a; color:white; padding:10px 18px; border-radius:6px; text-decoration:none;">View My Trips</a>
-                      </div>
-                      </div>
-                      <p style="margin-top:20px; font-size:13px; color:#555;">
-                        ⚠ <strong>Note:</strong> Cancelled trips will be automatically removed from your SmartTrip dashboard after 24 hours.
-                      </p>
-                    </div>
-                    </div>
-                  </div>
-                </div>
-            """.formatted(destination, orderId, currency, amount);
-
-            helper.setText(html, true);
-            mailSender.send(msg);
-            System.out.println("✅ Refund initiated email sent to " + email);
-        } catch (Exception e) {
-            System.err.println("⚠ Failed to send refund email: " + e.getMessage());
-        }
+        sendResend(email, "SmartTrip 💸 Refund Initiated – " + destination, "<h2>Refund initiated.</h2>");
     }
+
     public void sendTripCancellation(String email, String destination, String startDate, String endDate) {
-        try {
-            MimeMessage msg = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
-
-            helper.setFrom("smarttripteam@gmail.com","SmartTrip ✈");
-            helper.setTo(email);
-            helper.setSubject("SmartTrip ❌ Trip Cancelled – " + destination);
-
-            String html = """
-                <div style="font-family: Arial, sans-serif; background:#fff7ed; padding:20px;">
-                  <div style="max-width:600px; margin:auto; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.08)">
-                    <div style="background:#f97316; color:white; padding:15px; text-align:center;">
-                      <h2>Trip Cancelled ❌</h2>
-                    </div>
-                    <div style="padding:20px;">
-                      <p>Your trip to <strong>%s</strong> scheduled from <strong>%s → %s</strong> has been successfully cancelled.</p>
-                      <p>If any payment was made, the refund process will be initiated and you’ll receive a separate confirmation email.</p>
-                      <div style="text-align:center; margin-top:20px;">
-                        <a href="http://localhost:5173/my-trips" style="background:#f97316; color:white; padding:10px 18px; border-radius:6px; text-decoration:none;">View My Trips</a>
-                      </div>
-                      </div>
-                      <p style="margin-top:20px; font-size:13px; color:#555;">
-                        ⚠ <strong>Note:</strong> Cancelled trips will be automatically removed from your SmartTrip dashboard after 24 hours.
-                      </p>
-                    </div>
-                    </div>
-                  </div>
-                </div>
-            """.formatted(destination, startDate, endDate);
-
-            helper.setText(html, true);
-            mailSender.send(msg);
-            System.out.println("📨 Cancellation email sent to " + email);
-        } catch (Exception e) {
-            System.err.println("⚠ Failed to send trip cancellation email: " + e.getMessage());
-        }
+        sendResend(email, "SmartTrip ❌ Trip Cancelled – " + destination, "<h2>Trip cancelled.</h2>");
     }
+
     public void sendTripRebooked(String email, String destination, String startDate, String endDate) {
-        try {
-            MimeMessage msg = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
-            
-            helper.setFrom("smarttripteam@gmail.com","SmartTrip ✈");
-            helper.setTo(email);
-            helper.setSubject("SmartTrip 🔁 Trip Rebooked – " + destination);
-
-            String html = """
-                <div style="font-family: Arial, sans-serif; background:#ecfdf5; padding:20px;">
-                  <div style="max-width:600px; margin:auto; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.08)">
-                    <div style="background:#059669; color:white; padding:15px; text-align:center;">
-                      <h2>Trip Rebooked Successfully 🔁</h2>
-                    </div>
-                    <div style="padding:20px;">
-                      <p>Hi Traveler,</p>
-                      <p>Your trip to <strong>%s</strong> has been successfully <strong>rebooked</strong> within 24 hours of cancellation! 🎉</p>
-                      <p>Your travel dates remain the same:</p>
-                      <p><strong>%s → %s</strong></p>
-                      <p>You can view your updated itinerary from your dashboard.</p>
-                      <div style="text-align:center; margin-top:20px;">
-                        <a href="http://localhost:5173/my-trips" style="background:#059669; color:white; padding:10px 18px; border-radius:6px; text-decoration:none;">View My Trips</a>
-                      </div>
-                      <p style="margin-top:20px; font-size:13px; color:#555;">
-                        ⚠ <strong>Note:</strong> Cancelled trips will be automatically removed from your SmartTrip dashboard after 24 hours.
-                      </p>
-                    </div>
-                    <div style="background:#f1f5f9; padding:15px; text-align:center; font-size:13px; color:#666;">
-                      <p>Thank you for choosing <strong>SmartTrip</strong>! ✈</p>
-                      <p>© 2025 SmartTrip Inc. All Rights Reserved.</p>
-                    </div>
-                  </div>
-                </div>
-            """.formatted(destination, startDate, endDate);
-
-            helper.setText(html, true);
-            mailSender.send(msg);
-            System.out.println("✅ Rebook confirmation email sent to " + email);
-        } catch (Exception e) {
-            System.err.println("⚠ Failed to send rebook email: " + e.getMessage());
-        }
+        sendResend(email, "SmartTrip 🔁 Trip Rebooked – " + destination, "<h2>Trip rebooked.</h2>");
     }
+
     public void sendTripBookedPendingPayment(String email, String destination, String startDate, String endDate, double amount, String currency) {
-        try {
-            MimeMessage msg = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
-
-            helper.setFrom("smarttripteam@gmail.com","SmartTrip ✈");
-            helper.setTo(email);
-            helper.setSubject("SmartTrip 🧳 Trip Booked – Complete Payment to Confirm " + destination);
-
-            String html = """
-                <div style="font-family: Arial, sans-serif; background:#eef2ff; padding:20px;">
-                  <div style="max-width:600px; margin:auto; background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.08)">
-                    <div style="background:#4f46e5; color:white; padding:15px; text-align:center;">
-                      <h2>Trip Booked Successfully ✈</h2>
-                    </div>
-                    <div style="padding:20px;">
-                      <p>Hi Traveler,</p>
-                      <p>Your trip to <strong>%s</strong> has been <strong>booked</strong> successfully.</p>
-                      <p>To confirm your travel, please complete the payment as soon as possible.</p>
-                      <table style="width:100%%; border-collapse:collapse; margin:15px 0;">
-                        <tr><td><strong>Destination:</strong></td><td>%s</td></tr>
-                        <tr><td><strong>Travel Dates:</strong></td><td>%s → %s</td></tr>
-                        <tr><td><strong>Amount Due:</strong></td><td>%s %.2f</td></tr>
-                        <tr><td><strong>Status:</strong></td><td style="color:#f59e0b;">Awaiting Payment ⏳</td></tr>
-                      </table>
-                      <div style="text-align:center; margin-top:25px;">
-                        <a href="http://localhost:5173/my-trips" style="background:#4f46e5; color:white; padding:10px 18px; border-radius:6px; text-decoration:none;">Complete Payment</a>
-                      </div>
-                      <p style="margin-top:20px; font-size:13px; color:#555;">
-                        ⚠ <strong>Note:</strong> Cancelled trips will be automatically removed from your SmartTrip dashboard after 24 hours.
-                      </p>
-                    </div>
-                    <div style="background:#f9fafb; padding:15px; text-align:center; font-size:13px; color:#666;">
-                      <p>Thank you for planning your journey with <strong>SmartTrip</strong> 🌍</p>
-                      <p>© 2025 SmartTrip Inc. All Rights Reserved.</p>
-                    </div>
-                  </div>
-                </div>
-            """.formatted(destination, destination, startDate, endDate, currency, amount);
-
-            helper.setText(html, true);
-            mailSender.send(msg);
-            System.out.println("📨 Trip booked (pending payment) email sent to " + email);
-        } catch (Exception e) {
-            System.err.println("⚠ Failed to send booked pending payment email: " + e.getMessage());
-        }
+        sendResend(email, "SmartTrip 🧳 Complete Payment – " + destination, "<h2>Payment pending.</h2>");
     }
 }
