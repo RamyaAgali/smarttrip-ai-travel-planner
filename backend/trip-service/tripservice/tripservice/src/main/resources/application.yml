@@ -24,7 +24,7 @@ spring:
 
   mail:
     host: smtp-relay.brevo.com
-    port: 465
+    port: 2525
     username: ${BREVO_USERNAME}
     password: ${BREVO_PASSWORD}
     properties:
