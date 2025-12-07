@@ -71,6 +71,10 @@ public class CashfreeService {
             String userName = (String) user.getOrDefault("name", "User");
             String userEmail = (String) user.getOrDefault("email", "unknown@example.com");
             String userPhone = (String) user.getOrDefault("mobileNumber", "9999999999");
+            if(userPhone == null || !userPhone.matches("\\d{10}")) {
+            	System.out.println("Invalid phone detected, setting fallback 9999999999. Received: " + userPhone);
+            	userPhone = "9999999999";
+            }
             
             String safeCustomerId = username.replaceAll("[^a-zA-Z0-9]", "_");
             Map<String, Object> customer = Map.of(
