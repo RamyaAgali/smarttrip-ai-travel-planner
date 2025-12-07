@@ -17,7 +17,8 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/payment")
-@CrossOrigin(origins = {"http://localhost:5173","http://localhost:5174", "http://localhost:3000", "https://smarttrip-ai-travel-planner-hgrno23c9-ramya-agalis-projects.vercel.app"})
+//@CrossOrigin(origins = {"http://localhost:5173","http://localhost:5174", "http://localhost:3000", "https://smarttrip-ai-travel-planner-hgrno23c9-ramya-agalis-projects.vercel.app"})
+@CrossOrigin(origins = "https://smarttrip-ai-travel-planner.vercel.app")
 public class PaymentController {
 
     private final TripPaymentRepository paymentRepo;

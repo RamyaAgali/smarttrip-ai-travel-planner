@@ -23,7 +23,8 @@ import com.smarttrip.tripservice.service.EmailService;
 
 @RestController
 @RequestMapping("/api/trip")
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000", "http://localhost:5174","https://smarttrip-ai-travel-planner-hgrno23c9-ramya-agalis-projects.vercel.app"}, allowCredentials = "true")
+//@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000", "http://localhost:5174","https://smarttrip-ai-travel-planner-hgrno23c9-ramya-agalis-projects.vercel.app"}, allowCredentials = "true")/
+@CrossOrigin(origins = "https://smarttrip-ai-travel-planner.vercel.app")
 public class TripPlanController {
 	
 	private final TripPlanRepository tripPlanRepository;
