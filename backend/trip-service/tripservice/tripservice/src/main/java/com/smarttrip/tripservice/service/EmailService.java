@@ -473,7 +473,7 @@ public class EmailService {
                       </div>
                     </div>
                   </div>
-              """.formatted(destination, currency, amount, orderId);
+              """.formatted(destination, orderId, currency, amount );
 
             sendGridClient.sendEmail(email, subject, html);
             System.out.println("💸 Refund email sent to " + email);
