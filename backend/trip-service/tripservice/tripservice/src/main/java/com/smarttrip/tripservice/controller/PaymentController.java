@@ -70,7 +70,7 @@ public class PaymentController {
         paymentRepo.save(payment);
 
         // ✅ Create Cashfree order using CashfreeService (fetches real user details from AuthService)
-        return cashfreeService.createOrder(orderId, amount, currency, safeCustomerId, returnUrl)
+        return cashfreeService.createOrder(orderId, amount, currency, safeCustomerId)
                 .map(res -> {
                     System.out.println("✅ Cashfree Order Created: " + res);
                     return Map.of(
