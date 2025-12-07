@@ -13,7 +13,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/travel")
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174", "http://localhost:3000"})
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174", "http://localhost:3000","https://smarttrip-ai-travel-planner-hgrno23c9-ramya-agalis-projects.vercel.app"})
 public class TravelController {
 
     private final WebClient webClient;

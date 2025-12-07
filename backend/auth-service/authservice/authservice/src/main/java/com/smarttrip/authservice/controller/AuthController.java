@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174"})
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174", "https://smarttrip-ai-travel-planner-hgrno23c9-ramya-agalis-projects.vercel.app"})
 public class AuthController {
 
     private final UserService userService;
