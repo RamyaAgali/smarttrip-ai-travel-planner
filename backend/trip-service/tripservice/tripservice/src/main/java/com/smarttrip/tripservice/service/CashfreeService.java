@@ -87,8 +87,8 @@ public class CashfreeService {
                     "customer_details", customer,
                     "order_meta", Map.of(
                             "return_url", "http://localhost:5173/payment/success?order_id={order_id}&payment_id={payment_id}&status={order_status}",
-                            "notify_url", "https://romaine-peperine-dotty.ngrok-free.dev/api/payment/webhook",
-                            "failure_url","http://localhost:5173/payment/failure?order_id={order_id}&payment_id={payment_id}&status={order_status}"
+                            "return_url_type", "GET",
+                            "notify_url", "https://romaine-peperine-dotty.ngrok-free.dev/api/payment/webhook"
                     )
 //                    "order_meta", Map.of(
 //                    	    "return_url", "http://localhost:5173/payment/success?order_id={order_id}&payment_id={payment_id}&status={order_status}",

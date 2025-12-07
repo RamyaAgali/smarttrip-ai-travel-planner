@@ -52,6 +52,8 @@ public class PaymentController {
         String safeCustomerId = email.replaceAll("[^a-zA-Z0-9_-]", "_");
         
         String orderId = "ORDER-" + System.currentTimeMillis();
+        String returnUrl = "http://localhost:5173/payment/failure?order_id=" + orderId + "&status=FAILED";
+        
 
         // Save initial pending payment record
         TripPayment payment = TripPayment.builder()
@@ -68,7 +70,7 @@ public class PaymentController {
         paymentRepo.save(payment);
 
         // ✅ Create Cashfree order using CashfreeService (fetches real user details from AuthService)
-        return cashfreeService.createOrder(orderId, amount, currency, safeCustomerId)
+        return cashfreeService.createOrder(orderId, amount, currency, safeCustomerId, returnUrl)
                 .map(res -> {
                     System.out.println("✅ Cashfree Order Created: " + res);
                     return Map.of(
