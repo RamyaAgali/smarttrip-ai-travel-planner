@@ -147,7 +147,7 @@ public class AuthController {
     	        .map(user -> ResponseEntity.ok(Map.of(
     	                "name", user.getName(),
     	                "email", user.getEmail(),
-    	                "mobileNumber", user.getMobile() != null ? user.getMobile() : "9999999999"
+    	                "mobileNumber", user.getMobileNumber() != null ? user.getMobileNumber() : "9999999999"
     	        )))
     	        .orElse(ResponseEntity.status(404)
     	                .body(Map.of("error", "User not found for: " + actualEmail)));

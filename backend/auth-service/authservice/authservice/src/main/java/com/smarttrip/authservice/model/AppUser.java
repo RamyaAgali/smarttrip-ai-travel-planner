@@ -21,7 +21,7 @@ public class AppUser {
 
     private String password;
     
-    private String mobile;
+    private String mobileNumber;
 
     // ✅ Add getters and setters
     public Long getId() { return id; }
@@ -36,6 +36,6 @@ public class AppUser {
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
     
-    public String getMobile() { return mobile; }
-    public void setMobile( String mobile) { this.mobile = mobile; }
+    public String getMobileNumber() { return mobileNumber; }
+    public void setMobile( String mobileNumber) { this.mobileNumber = mobileNumber; }
 }
