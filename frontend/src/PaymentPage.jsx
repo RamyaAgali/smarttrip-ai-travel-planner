@@ -101,7 +101,7 @@ function PaymentPage() {
         setTimeout(() => {
           if(!window.location.href.includes("cashfree.com"))
           {
-            window.location.href = "http://localhost:5173/payment/failure";
+            window.location.href = "https://smarttrip-ai-travel-planner.vercel.app/payment/failure";
           }
         }, 30000);
       } else {
