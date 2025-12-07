@@ -53,7 +53,7 @@ public class PaymentController {
         String safeCustomerId = email.replaceAll("[^a-zA-Z0-9_-]", "_");
         
         String orderId = "ORDER-" + System.currentTimeMillis();
-        String returnUrl = "http://localhost:5173/payment/failure?order_id=" + orderId + "&status=FAILED";
+        String returnUrl = "https://smarttrip-ai-travel-planner.vercel.app/payment/failure?order_id=" + orderId + "&status=FAILED";
         
 
         // Save initial pending payment record
@@ -231,7 +231,7 @@ public class PaymentController {
         // 🔹 Redirect user to frontend failure page
         return ResponseEntity
                 .status(302)
-                .header("Location", "http://localhost:5173/payment/failure?order_id=" + orderId)
+                .header("Location", "https://smarttrip-ai-travel-planner.vercel.app/payment/failure?order_id=" + orderId)
                 .build();
     }
  // ⭐ NEW: Check latest payment status for a trip
