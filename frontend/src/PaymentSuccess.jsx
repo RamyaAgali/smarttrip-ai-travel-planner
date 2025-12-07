@@ -22,7 +22,7 @@ export default function PaymentSuccess() {
         }
 
         // 🔹 Call backend to finalize & send invoice email
-        const res = await fetch("http://localhost:8084/api/payment/success", {
+        const res = await fetch(`${import.meta.env.VITE_TRIP_SERVICE_URL}/api/payment/success`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ orderId, paymentId, method }),

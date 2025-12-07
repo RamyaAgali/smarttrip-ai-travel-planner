@@ -24,7 +24,7 @@ export default function Dashboard() {
   }
 
    useEffect(() => {
-  fetch("http://localhost:8081/api/auth/profile", {
+  fetch(`${import.meta.env.VITE_AUTH_SERVICE_URL}/api/auth/profile`, {
     headers: { Authorization: `Bearer ${token}` },
   })
     .then((res) => {

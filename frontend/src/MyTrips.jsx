@@ -10,7 +10,7 @@ export default function MyTrips() {
 
   const fetchTrips = async () => {
     try {
-      const res = await fetch(`http://localhost:8084/api/trip/user/${userEmail}`);
+      const res = await fetch(`${import.meta.env.VITE_TRIP_SERVICE_URL}/api/trip/user/${userEmail}`);
       const data = await res.json();
       setTrips(data);
     } catch (err) {
@@ -23,7 +23,7 @@ export default function MyTrips() {
   const cancelTrip = async (id) => {
     if (!window.confirm("Are you sure you want to cancel this trip?")) return;
     try {
-      const res = await fetch(`http://localhost:8084/api/trip/cancel/${id}`, { method: "PUT" });
+      const res = await fetch(`${import.meta.env.VITE_TRIP_SERVICE_URL}/api/trip/cancel/${id}`, { method: "PUT" });
       if (res.ok) {
         alert("Trip cancelled successfully!");
         fetchTrips();
@@ -37,7 +37,7 @@ export default function MyTrips() {
 
   const rebookTrip = async (id) => {
     try {
-      const res = await fetch(`http://localhost:8084/api/trip/rebook/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_TRIP_SERVICE_URL}/api/trip/rebook/${id}`, {
         method: "PUT",
       });
       if (res.ok) {
@@ -54,7 +54,7 @@ export default function MyTrips() {
 const handlePayment = async (trip) => {
   try {
     // 1️⃣ Create order in backend (calls Cashfree API)
-    const res = await fetch("http://localhost:8084/api/payment/create", {
+    const res = await fetch(`${import.meta.env.VITE_TRIP_SERVICE_URL}/api/payment/create`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

@@ -17,7 +17,7 @@ function PaymentPage() {
       return;
     }
 
-    fetch("http://localhost:8081/api/auth/profile", {
+    fetch(`${import.meta.env.VITE_AUTH_SERVICE_URL}/api/auth/profile`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -39,7 +39,7 @@ function PaymentPage() {
   // ✅ Fetch trip details using tripId
   useEffect(() => {
     if (!tripId) return;
-    fetch(`http://localhost:8084/api/trip/${tripId}`)
+    fetch(`${import.meta.env.VITE_TRIP_SERVICE_URL}/api/trip/${tripId}`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch trip details");
         return res.json();
@@ -72,7 +72,7 @@ function PaymentPage() {
 
       console.log("💰 Sending payment payload:", payload);
 
-      const res = await fetch("http://localhost:8084/api/payment/create", {
+      const res = await fetch(`${import.meta.env.VITE_TRIP_SERVICE_URL}/api/payment/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

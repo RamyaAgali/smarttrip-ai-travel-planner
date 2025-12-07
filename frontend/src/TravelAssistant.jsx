@@ -48,7 +48,7 @@ export default function TravelAssistant() {
     }
 
     // 🌍 Step 1: Fetch main trip plan
-    const response = await fetch(`http://localhost:8084/api/travel/plan?${query.toString()}`);
+    const response = await fetch(`${import.meta.env.VITE_TRIP_SERVICE_URL}/api/travel/plan?${query.toString()}`);
     if (!response.ok) throw new Error("Failed to fetch travel plan");
 
     const data = await response.json();
@@ -56,7 +56,7 @@ export default function TravelAssistant() {
     // 💰 Step 2: AI-powered cost estimation
     try {
       console.log("🔹 Calling AI cost estimation...");
-      const costResponse = await fetch("http://localhost:8084/api/travel/cost", {
+      const costResponse = await fetch(`${import.meta.env.VITE_TRIP_SERVICE_URL}/api/travel/cost`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -420,7 +420,7 @@ export default function TravelAssistant() {
                   : 0;
 
                 try {
-                  const res = await fetch("http://localhost:8084/api/trip/save", {
+                  const res = await fetch(`{import.meta.env.VITE_TRIP_SERVICE_URL}/api/trip/save`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(tripData),
@@ -471,7 +471,7 @@ export default function TravelAssistant() {
                   : 0;
 
                 try {
-                  const res = await fetch("http://localhost:8084/api/trip/save", {
+                  const res = await fetch(`${import.meta.env.VITE_TRIP_SERVICE_URL}/api/trip/save`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(tripData),
@@ -500,7 +500,7 @@ export default function TravelAssistant() {
                 onClick={async () => {
                   try {
                     const res = await fetch(
-                      `http://localhost:8084/api/trip/book/${plan.tripId}`,
+                      `${import.meta.env.VITE_TRIP_SERVICE_URL}/api/trip/book/${plan.tripId}`,
                       { method: "PUT" }
                     );
                     if (res.ok) {
@@ -524,7 +524,7 @@ export default function TravelAssistant() {
     onClick={async () => {
       try {
         const res = await fetch(
-          `http://localhost:8084/api/trip/book/${plan.tripId}`,
+          `${import.meta.env.VITE_TRIP_SERVICE_URL}/api/trip/book/${plan.tripId}`,
           { method: "PUT" }
         );
 

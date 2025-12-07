@@ -50,13 +50,14 @@ import Dashboard from './Dashboard.jsx'
 import ForgotPassword from './Forgotpassword.jsx'
 import ResetPassword from './ResetPassword.jsx'
 import TravelAssistant from './TravelAssistant.jsx'
-import Profile from './profile.jsx'
+import Profile from './Profile.jsx'
 import MyTrips from './MyTrips.jsx'
 import BackToDashboardButton from './components/BackToDashboardButton.jsx'
 import PaymentPage from './PaymentPage.jsx'
 import PaymentSuccess from './PaymentSuccess.jsx'
 import PaymentFailure from './PaymentFailure.jsx'
-import ProtectedLayout from './components/ProtectedLayout.jsx'   // ⭐ IMPORT LAYOUT HERE
+import ProtectedLayout from './components/ProtectedLayout.jsx'
+import PaymentStatus from './PaymentStatus.jsx'
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -80,6 +81,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path="/payment/:tripId" element={<PaymentPage />} />
           <Route path="/payment/success" element={<PaymentSuccess />} />
           <Route path="/payment/failure" element={<PaymentFailure />} />
+          <Route path="/payment/status" element={<PaymentStatus/>}/>
         </Route>
 
       </Routes>

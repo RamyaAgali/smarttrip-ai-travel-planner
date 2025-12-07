@@ -9,6 +9,7 @@ export default function Login() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -23,7 +24,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8081/api/auth/login", {
+      const response = await fetch(`${import.meta.env.VITE_AUTH_SERVICE_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -100,9 +101,10 @@ export default function Login() {
               />
             </div>
             <div>
-              <label className="block text-gray-600">Password</label>
+            <label className="block text-gray-600">Password</label>
+            <div className="relative">
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
@@ -110,7 +112,16 @@ export default function Login() {
                 required
                 className="w-full p-3 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+
+              {/* 👁 Eye Icon */}
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
+              >
+                {showPassword ? "🙈" : "👁"}
+              </span>
             </div>
+          </div>
 
             {/* Error Message */}
             {error && <p className="text-red-500 text-center">{error}</p>}
